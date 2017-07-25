@@ -18,6 +18,13 @@ $(document).ready(function () {
                 autoHideDelay: 2000
             })
         }
+        setTimeout(function () {
+            $(event.target).prop("disabled", true);
+        }, 100);
+        setTimeout(function () {
+            $(event.target).prop("disabled", false);
+        }, 3000)
+
     });
 
     /* preset button click event handler */
