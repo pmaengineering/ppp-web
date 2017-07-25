@@ -4,7 +4,7 @@ function clearOptions() {
 
 function setOption(value) {
     var selector = "input[value='" + value + "']";
-    $(selector).click();
+    $(selector).prop('checked', true);
 }
 
 $(document).ready(function () {
@@ -23,6 +23,9 @@ $(document).ready(function () {
     /* preset button click event handler */
     $("#presets").find("label").click(function (event) {
         var $e = $(event.target).find("input");
+        if ($e.val() === 'custom') {
+            return;
+        }
         clearOptions();
         switch ($e.val()) {
             case 'developer':
@@ -44,6 +47,6 @@ $(document).ready(function () {
 
     /* options checkbox click event handler */
     $("input[type='checkbox']").click(function (event) {
-        $("#presets").find("input").attr("checked", false);
+        $("#btnCustomPreset").click();
     });
 });
