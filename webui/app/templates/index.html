@@ -116,6 +116,13 @@
         </form>
     </div>
 </div>
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <div class="hidden" id="message" data-category="{{ messages[0][0] }}">
+            {{ messages[0][1] }}
+        </div>
+    {% endif %}
+{% endwith %}
 </body>
 <script src="{{ url_for('static', filename='js/jquery.min.js') }}"
         type="text/javascript"></script>

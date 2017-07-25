@@ -44,9 +44,18 @@ $(document).ready(function () {
         }
     });
 
-
     /* options checkbox click event handler */
     $("input[type='checkbox']").click(function (event) {
         $("#btnCustomPreset").click();
     });
+
+
+    var $message = $("#message");
+    var text = $message.text().trim();
+    if (text !== '') {
+        $.notify(text, {
+            position: "top right",
+            className: $message.data("category")
+        })
+    }
 });
