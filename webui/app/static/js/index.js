@@ -23,6 +23,10 @@ $(document).ready(function () {
         }, 100);
         setTimeout(function () {
             $(event.target).prop("disabled", false);
+            // Clear the form
+            $("#btnHtmlFormat").click();
+            $("#btnDevPreset").click();
+            $("#form").get(0).reset();
         }, 3000)
 
     });
@@ -62,7 +66,8 @@ $(document).ready(function () {
     if (text !== '') {
         $.notify(text, {
             position: "top right",
-            className: $message.data("category")
+            className: $message.data("category"),
+            autoHideDelay: 5000
         })
     }
 });

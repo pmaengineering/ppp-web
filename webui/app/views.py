@@ -38,7 +38,7 @@ class IndexView(MethodView):
         options = request.form.getlist('options')
 
         if preset != 'custom':
-            options = ['preset=' + preset]
+            options = ['preset ' + preset]
 
         command_line = " ".join((
             config.python_executable,
@@ -46,8 +46,8 @@ class IndexView(MethodView):
             file_path,
             "-l " + language,
             "-f " + out_format,
-            "-o " + output_file_path,
-            *(' --{}'.format(option) for option in options)
+            *('--{}'.format(option) for option in options),
+            "-o " + output_file_path
         ))
 
         args = shlex.split(command_line)
@@ -55,8 +55,12 @@ class IndexView(MethodView):
                              stdout=subprocess.PIPE,
                              stderr=subprocess.PIPE)
 
-        stdout = p.stdout.read().decode()
-        stterr = p.stderr.read().decode()
+        stdout = p.stdout.read().decode().strip()
+        stderr = p.stderr.read().decode().strip()
+
+        if stdout or stderr:
+            flash("STDOUT:\n{}\nSTDERR:\n{}".format(stdout, stderr), "error")
+            return redirect(url_for('index'))
 
         return send_file(output_file_path,
                          as_attachment=True,
