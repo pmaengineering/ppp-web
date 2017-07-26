@@ -1,7 +1,9 @@
 import os
 
-tmp_dir = '/tmp'
+base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+bin_dir = os.path.join(base_dir, 'bin')
 
+wkhtmltopdf_executable = os.path.join(bin_dir, 'wkhtmltopdf')
 python_executable = '/home/pydevd/projects/conv-webui/.venv/bin/python3'
 
 THREADS_PER_PAGE = 2
