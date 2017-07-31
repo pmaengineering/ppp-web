@@ -6,7 +6,7 @@ Web server and client application for Pretty PDF Printer, a package to convert O
 Update system and install required packages
 
 ``$ apt-get update``
-``$ apt-get install libfontconfig1 libxrender1 python3-pip python3-dev python3-venv nginx git vim``
+``$ apt-get install htop libfontconfig1 libxrender1 python3-pip python3-dev python3-venv nginx git vim``
 
 Clone project from repo
 
@@ -41,9 +41,9 @@ Set execution flag for ``bin/wkhtmltopdf``
 
 ``/opt/webui $ chmod +x bin/wkhtmltopdf``
 
-Run the app:
+Run the app in background:
 
-``/opt/webui $ python uwsgi.py``
+``/opt/webui $ gunicorn -b 0.0.0.0:8080 uwsgi:app &``
 
 Open web interface at address:
 
