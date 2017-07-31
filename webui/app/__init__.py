@@ -14,7 +14,10 @@ def add_views(_app):
 
 
 def create_app():
-    app = Flask(__name__)
+    _app = Flask(__name__)
     configure_app(app)
     add_views(app)
-    return app
+    return _app
+
+
+app = create_app()
