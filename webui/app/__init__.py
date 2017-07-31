@@ -18,6 +18,3 @@ def create_app():
     configure_app(_app)
     add_views(_app)
     return _app
-
-
-app = create_app()
