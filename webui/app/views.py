@@ -1,3 +1,4 @@
+"""Views for application."""
 import os
 import shlex
 import subprocess
@@ -11,14 +12,16 @@ from flask import send_file
 from flask import url_for
 from flask.views import MethodView
 
-from app import config
+from app import config  # TODO: Refactor to remove IDE error/run consistently.
 
 
 class IndexView(MethodView):
     """
     This method responsible only for returning rendered template
     """
-    def get(self):
+    @staticmethod
+    def get():
+        """Get method."""
         return render_template('index.html')
 
     def post(self):
@@ -29,7 +32,7 @@ class IndexView(MethodView):
 
         # check if user uploaded an excel file
         file = request.files['file']
-        if file and '.xls' not in file.filename:
+        if file and '.xls' not in file.filename:  # TODO: Refactor, endswith.
             flash("Uploaded file is not an .xls or .xlsx file", "error")
             return redirect(url_for('index'))
 
@@ -49,9 +52,8 @@ class IndexView(MethodView):
 
         # process output format and mime type for downloading
         post_process_to = None
-        mime_type = 'application/text'
-        if output_format == 'html':
-            mime_type = 'text/html'
+        mime_type = 'text/html' if output_format == 'html'\
+            else 'application/text'
 
         if output_format in ('pdf', 'doc'):
             post_process_to = output_format
@@ -89,9 +91,12 @@ class IndexView(MethodView):
                          attachment_filename=file_name)
 
     def _convert_to_pdf(self, file_path):
-        """
-        This method converts .html file to .pdf file using external tool named
-        `wkhtmltopdf`. Returns path to converted file and mime type
+        """This method converts .html file to .pdf file
+
+        Uses external tool named `wkhtmltopdf`.
+
+        Returns:
+             Path to converted file and mime type.
         """
         pdf_file_path = file_path.replace('.html', '.pdf')
         command_line = " ".join((
@@ -104,21 +109,26 @@ class IndexView(MethodView):
         mime_type = 'text/pdf'
         return pdf_file_path, mime_type
 
-    def _convert_to_doc(self, file_path):
-        """
-        This method renames .html file to .doc file. Returns path to renamed file
-        and mime type for word files
+    @staticmethod
+    def _convert_to_doc(file_path):
+        """This method renames .html file to .doc file.
+
+        Returns:
+            path to renamed file and mime type for word files.
         """
         doc_file_path = file_path.replace('.html', '.doc')
         os.rename(file_path, doc_file_path)
         _, doc_file_name = os.path.split(doc_file_path)
-        mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
+        mime_type = 'application/vnd.openxmlformats-officedocument.' \
+                    'wordprocessingml.document'
         return doc_file_path, mime_type
 
-    def _run_background_process(self, command_line):
-        """
-        This method runs external program using command line interface. Returns
-        stdout and stdin of executed program
+    @staticmethod
+    def _run_background_process(command_line):
+        """This method runs external program using command line interface.
+
+        Returns:
+             stdout,stdin: Of executed program.
         """
         args = shlex.split(command_line)
         process = subprocess.Popen(args,
@@ -130,13 +140,13 @@ class IndexView(MethodView):
 
         return stdout, stderr
 
-    def _build_pmix_ppp_tool_run_cmd(self,
-                                     in_file_path,
-                                     out_format,
+    @staticmethod
+    def _build_pmix_ppp_tool_run_cmd(in_file_path, out_format,
                                      out_file_path):
-        """
-        This method build command line command to run pmix.ppp tool.
-        Return string with command
+        """This method build command line command to run pmix.ppp tool.
+
+        Returns:
+            string: Command.
         """
 
         language = request.form.get('language')
