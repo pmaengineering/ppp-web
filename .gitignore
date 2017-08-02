@@ -1,3 +1,4 @@
 *.py[cd]
 .*
 !.gitignore
+env/
