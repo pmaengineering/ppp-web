@@ -60,7 +60,6 @@ $(document).ready(function () {
         $("#btnCustomPreset").click();
     });
 
-
     var $message = $("#message");
     var text = $message.text().trim();
     if (text !== '') {
