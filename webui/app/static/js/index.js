@@ -92,7 +92,7 @@ $(document).ready(function () {
         $.notify(text, {
             position: "top right",
             className: $message.data("category"),
-            autoHideDelay: 5000
+            autoHide: false
         })
     }
 });
