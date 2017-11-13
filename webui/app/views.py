@@ -155,8 +155,13 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
+        python_executable = config.python_executable
+        if 'DEPLOYMENT_ENV' in os.environ and os.environ['DEPLOYMENT_ENV']\
+                == 'development':
+            python_executable = 'python'
+
         command_line = " ".join((
-            config.python_executable,
+            python_executable,
             '-m pmix.ppp',
             in_file_path,
             "-l " + language,
