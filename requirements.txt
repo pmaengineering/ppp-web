@@ -1,10 +1,21 @@
+astroid==1.5.3
 click==6.7
 Flask==0.12.2
+gunicorn==19.7.1
+isort==4.2.15
 itsdangerous==0.24
 Jinja2==2.9.6
+lazy-object-proxy==1.3.1
 MarkupSafe==1.0
+mccabe==0.6.1
+pycodestyle==2.3.1
+pydocstyle==2.1.1
+pylint==1.7.4
+six==1.11.0
+snowballstemmer==1.2.1
 Werkzeug==0.12.2
-gunicorn==19.7.1
+wrapt==1.10.11
 xlrd==1.1.0
 XlsxWriter==1.0.0
-https://github.com/joeflack4/pmix/zipball/feature_ppp
+https://github.com/joeflack4/pmix/zipball/working_ppp
+# https://github.com/jkpr/pmix/zipball/develop
