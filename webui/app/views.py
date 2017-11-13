@@ -1,4 +1,4 @@
-"""module contains main view class"""
+"""Views for application."""
 import os
 import shlex
 import subprocess
@@ -12,15 +12,16 @@ from flask import send_file
 from flask import url_for
 from flask.views import MethodView
 
-from app import config
+from app import config  # TODO: Refactor to remove IDE error/run consistently.
 
 
 class IndexView(MethodView):
     """
     Index view class with two handlers for GET and POST requests
     """
-    def get(self):
-        """GET request handler. Just renders HTML for main page"""
+    @staticmethod
+    def get():
+        """Get method."""
         return render_template('index.html')
 
     def post(self):
@@ -28,7 +29,7 @@ class IndexView(MethodView):
 
         # check if user uploaded an excel file
         file = request.files['file']
-        if file and '.xls' not in file.filename:
+        if file and '.xls' not in file.filename:  # TODO: Refactor, endswith.
             flash("Uploaded file is not an .xls or .xlsx file", "error")
             return redirect(url_for('index'))
 
@@ -48,9 +49,8 @@ class IndexView(MethodView):
 
         # process output format and mime type for downloading
         post_process_to = None
-        mime_type = 'application/text'
-        if output_format == 'html':
-            mime_type = 'text/html'
+        mime_type = 'text/html' if output_format == 'html'\
+            else 'application/text'
 
         if output_format in ('pdf', 'doc'):
             post_process_to = output_format
@@ -86,9 +86,12 @@ class IndexView(MethodView):
                          attachment_filename=file_name)
 
     def _convert_to_pdf(self, file_path):
-        """
-        converts html file to pdf file on the disk
-        :param file_path: path to html file
+        """This method converts .html file to .pdf file
+
+        Uses external tool named `wkhtmltopdf`.
+
+        Returns:
+             Path to converted file and mime type.
         """
         # create output file path
         pdf_file_path = file_path.replace('.html', '.pdf')
@@ -110,11 +113,12 @@ class IndexView(MethodView):
         # return file name, path and mime type to be used in response
         return pdf_file_name, pdf_file_path, mime_type
 
-    def _convert_to_doc(self, file_path):
-        """
-        "converts" html file to doc file
-        :param file_path: html file path on disk
-        :return: 
+    @staticmethod
+    def _convert_to_doc(file_path):
+        """This method renames .html file to .doc file.
+
+        Returns:
+            path to renamed file and mime type for word files.
         """
 
         # get doc file path
@@ -123,15 +127,16 @@ class IndexView(MethodView):
         os.rename(file_path, doc_file_path)
         # get file name
         _, doc_file_name = os.path.split(doc_file_path)
-        mime_type = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'
-        # return file name, path and mime type to be used in response
-        return doc_file_name, doc_file_path, mime_type
+        mime_type = 'application/vnd.openxmlformats-officedocument.' \
+                    'wordprocessingml.document'
+        return doc_file_path, mime_type
 
-    def _run_background_process(self, command_line):
-        """
-        executes external command
-        :param command_line: command line string
-        :return: stdout and stdin of executed command
+    @staticmethod
+    def _run_background_process(command_line):
+        """This method runs external program using command line interface.
+
+        Returns:
+             stdout,stdin: Of executed program.
         """
 
         args = shlex.split(command_line)
@@ -144,14 +149,13 @@ class IndexView(MethodView):
 
         return stdout, stderr
 
-    def _build_pmix_ppp_tool_run_cmd(self, in_file_path, out_format,
+    @staticmethod
+    def _build_pmix_ppp_tool_run_cmd(in_file_path, out_format,
                                      out_file_path):
-        """
-        builds command line string for ppp tool 
-        :param in_file_path: input excel file path
-        :param out_format: output format
-        :param out_file_path: output file path
-        :return: command line string
+        """This method build command line command to run pmix.ppp tool.
+
+        Returns:
+            string: Command.
         """
         language = request.form.get('language')
         preset = request.form.get('preset', 'developer')
@@ -159,8 +163,13 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
+        python_executable = config.python_executable
+        if 'DEPLOYMENT_ENV' in os.environ and os.environ['DEPLOYMENT_ENV']\
+                == 'development':
+            python_executable = 'python'
+
         command_line = " ".join((
-            config.python_executable,
+            python_executable,
             '-m pmix.ppp',
             in_file_path,
             "-l " + language,
