@@ -3,3 +3,4 @@
 !.gitignore
 env/
 dev/
+test/files/ignored/*
