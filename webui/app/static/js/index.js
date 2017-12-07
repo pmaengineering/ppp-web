@@ -22,7 +22,7 @@ $(document).ready(function () {
             event.preventDefault();
             // show notification and exit handler
             return $(".file-input").notify("Please, select file for uploading", {
-                position: "right",
+                position: ($(window).width() < 992) ? "bottom right" : "right",
                 className: "error",
                 autoHideDelay: 2000
             })
