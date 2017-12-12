@@ -5,3 +5,23 @@
 .txt-input {
     padding: 3px 7px;
 }
+
+@media (max-width: 370px),
+(min-width: 992px) and (max-width: 1199px) {
+  h2 {
+    font-size: 2.4rem;
+  }
+}
+
+@media (max-width: 330px) {
+  .btn {
+    padding: 0.6rem 1rem;
+  }
+}
+
+@media (min-width: 992px) and (max-width: 1199px) {
+  .col-md-3 {
+    width: auto !important;
+    padding: 0.6rem 1rem;
+  }
+}
