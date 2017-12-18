@@ -88,10 +88,17 @@ $(document).ready(function () {
     // contains a server message, and if contains, show it to user
     var $message = $("#message");
     var text = $message.text().trim();
+
+    var notify_classes;
+    if ($message.data("category") == null) notify_classes = ['error', 'wrap-spaces'];
+    else notify_classes = [$message.data("category"), 'wrap-spaces'];
+
     if (text !== '') {
-        $.notify(text, {
-            position: "top right",
-            className: $message.data("category"),
+        $("#btnSubmit").notify(text, {
+            clickToHide: true,
+            arrowShow: false,
+            position: "bottom left",
+            className: notify_classes,
             autoHide: false
         })
     }
