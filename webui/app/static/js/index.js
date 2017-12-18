@@ -94,9 +94,10 @@ $(document).ready(function () {
     else notify_classes = [$message.data("category"), 'wrap-spaces'];
 
     if (text !== '') {
-        $.notify(text, {
+        $("#btnSubmit").notify(text, {
             clickToHide: true,
-            position: "top right",
+            arrowShow: false,
+            position: "bottom left",
             className: notify_classes,
             autoHide: false
         })

@@ -28,4 +28,17 @@
 
 .notifyjs-bootstrap-wrap-spaces {
   white-space: normal !important;
+  word-break: break-word;
+}
+
+div.form-group.w100prc {
+  position: relative;
+}
+
+div.form-group.w100prc div.notifyjs-wrapper.notifyjs-hidable {
+  width: 100%;
+}
+
+div.form-group.w100prc div.notifyjs-container {
+  margin-bottom: 1rem;
 }
