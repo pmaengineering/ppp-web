@@ -1,7 +1,8 @@
 # PPP-Web
 Web server and client application for Pretty PDF Printer, a package to convert ODK XlsForms to human readable formats.
 
-# Application brief description
+
+# Application Internals
 
 Application contains only one page with web form, where user can upload an ODK XlsForms file
 for conversion to HTML, PDF of DOC format.
@@ -26,47 +27,59 @@ with .doc extension instead of .html, as office programs understands how to rend
 - UI: manually selecting/deselecting conversion options will activate "Custom" preset button.
 
 
-# Deployment (Ubuntu)
+# Deployment
 
-Update system and install required packages
+#### Update system and install required packages
+This deployment guide is written for [*Ubuntu*](https://www.linode.com/docs/getting-started/#ubuntu-debian). For other Linux distributions, please refer to this [handy setup guide](https://www.linode.com/docs/getting-started/#install-software-updates), especially if using *Linode*.
 
-`$ apt-get update`
+`apt-get update && apt-get upgrade`
 
-`$ apt-get install htop libfontconfig1 libxrender1 python3-pip python3-dev python3-venv nginx git vim`
+> **Note**  
+> Ubuntu may prompt you when the Grub package is updated. If prompted, select keep the local version currently installed.
 
-Clone project from repo
+`apt-get install htop libfontconfig1 libxrender1 python3-pip python3-dev python3-venv nginx git vim`
 
-`$ cd /opt`
+#### Clone project from repo
 
-`/opt $ git clone https://github.com/PMA-2020/ppp-web.git`
+`cd /opt`
 
-Create virtual environment
+`/opt $` `git clone https://github.com/PMA-2020/ppp-web.git`
 
-`/opt $ cd ppp-web`
+#### Create virtual environment
 
-`/opt/ppp-web $ python3 -m venv .venv`
+`/opt $` `cd ppp-web`
 
-`/opt/ppp-web $ source .venv/bin/activate`
+`/opt/ppp-web $` `python3 -m venv .venv`
 
-`/opt/ppp-web $ pip install --upgrade pip`
+`/opt/ppp-web $` `source .venv/bin/activate`
 
+`/opt/ppp-web $` `pip install --upgrade pip`
+
+#### Dependencies
 Install project dependencies
 
-`/opt/ppp-web $ pip install -r requirements.txt`
+`/opt/ppp-web $` `pip install -r requirements.txt`
 
 Install pmix package
 
 `/opt/ppp-web $ pip install -r https://raw.githubusercontent.com/<git-suburl>/requirements.txt`  
-Example of <git-suburl>: `jkpr/pmix/develop`
+> **Example**  
+> `pip install -r https://raw.githubusercontent.com/jkpr/pmix/develop/requirements.txt`
+
+> **Note**  
+> You may experience a `DistutilsError` related to the `cairocffi` package. If this occurs, it is likely OK to ignore, as this is a peer dependency and not required for PPP-Web.
 
 `/opt/ppp-web $ pip install https://github.com/<git-suburl>`  
-Example of <git-suburl>: `joeflack4/pmix/archive/ppp.zip`
+> **Examples**
+> `pip install https://github.com/jkpr/pmix/archive/develop.zip`
+> `pip install https://github.com/joeflack4/pmix/archive/ppp.zip`
 
+#### Additional Configuration
 Change Python executable path
 
-`/opt/ppp-web $ cd webui`
+`/opt/ppp-web $` `cd webui`
 
-`/opt/ppp-web/webui $ vim app/config.py`
+`/opt/ppp-web/webui $` `vim app/config.py`
 
 Set Python executable variable
 
@@ -74,36 +87,56 @@ Set Python executable variable
 
 Set execution flag for dependency *wkhtmltopdf*
 
-`/opt/ppp-web/webui $ chmod +x bin/wkhtmltopdf`
+`/opt/ppp-web/webui $` `chmod +x bin/wkhtmltopdf`
 
+#### Run server process
 Run the app in background
 
-`/opt/ppp-web/webui $ gunicorn -b 0.0.0.0:8080 uwsgi:app &`
+`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 uwsgi:app &`
 
 Open web interface at address
 
 `https://<server-ip>:8080`
 
-# Upgrading Dependencies
+
+# Maintenance
+## Upgrading Dependencies
 #### Log in to server
 `ssh <server>` and enter password when prompted. 
 
 Example: `root@192.155.80.11`
-#### Activate virtual environment
-`cd /opt/ppp-web`
-`source .venv/bin/activate`
+
+#### Activate environment
+> Common Workflows > [Activate virtual environment](#activate-virtual-environment)
+
 #### Upgrade dependency
 `python -m pip install <url-to-dependency> --upgrade`
 
 Example: `python -m pip install git+https://github.com/jkpr/pmix@develop --upgrade` 
 
-#### Restart server (if necessary)  
-###### Find process ID  
+#### Restart server
+> Common Workflows > [Restart server](#restarting-the-server)
+
+
+# Common Workflows
+## Starting the server
+#### Activate environment
+> Common Workflows > [Activate virtual environment](#activate-virtual-environment)
+
+#### Run server process
+`cd /opt/ppp-web/webui`
+
+`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 uwsgi:app &`
+
+## Restarting the server 
+#### Find process ID  
 The server that PPP-Web uses is called "gunicorn", so: `ps -e | grep gunicorn`  
 
-###### Kill process  
+#### Kill process  
 `kill -9 <ID>`, where "<ID>" is the one found in previous step.
-###### Start new process
-`cd webui`
+#### Start new process
+> Common Workflows > [Starting the server](#starting-the-server)
 
-`gunicorn -b 0.0.0.0:8080 uwsgi:app &`
+## Activate virtual environment
+`cd /opt/ppp-web`
+`/opt/ppp-web $` `source .venv/bin/activate`
