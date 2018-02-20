@@ -18,7 +18,7 @@ DOC_TEST=${PYDOCSTYLE} ${TEST}
 MANAGE=${PYTHON} manage.py
 
 
-.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-local serve-staging serve-production shell db production staging tags ltags upgrade-pmix-trunk-master upgrade-pmix-trunk-develop upgrade-pmix-joeflack4-master upgrade-pmix-joeflack4-develop upgrade-pmix upgrade-ppp-web-joeflack4-develop upgrade-ppp-web
+.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-local serve-staging serve-production shell db production staging tags ltags upgrade-pmix-trunk-master upgrade-pmix-trunk-develop upgrade-pmix-joeflack4-master upgrade-pmix-joeflack4-develop upgrade-pmix upgrade-ppp-web-joeflack4-develop upgrade-ppp-web activate
 
 
 # ALL LINTING
@@ -96,6 +96,9 @@ staging:
 ACTIVATE=source .venv/bin/activate
 PIP=python -m pip install --upgrade git+https://github.com/
 UPGRADE=${ACTIVATE} && ${PIP}
+
+activate:
+	${ACTIVATE}
 
 add-remotes:
 	git remote add trunk https://github.com/PMA-2020/ppp-web.git && \
