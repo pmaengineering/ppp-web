@@ -78,6 +78,9 @@ gunicorn:
 production:
 	ssh root@192.155.80.11
 
+staging:
+	ssh root@172.104.31.28
+
 
 # CTAGS
 tags:

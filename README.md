@@ -57,10 +57,12 @@ Install project dependencies
 Install pmix package
 
 `/opt/ppp-web $ pip install -r https://raw.githubusercontent.com/<git-suburl>/requirements.txt`  
-Example of <git-suburl>: `jkpr/pmix/develop`
+> **Example**  
+> `pip install -r https://raw.githubusercontent.com/jkpr/pmix/develop/requirements.txt`
 
 `/opt/ppp-web $ pip install https://github.com/<git-suburl>`  
-Example of <git-suburl>: `joeflack4/pmix/archive/ppp.zip`
+> **Example**
+> `pip install https://github.com/joeflack4/pmix/archive/ppp.zip`
 
 Change Python executable path
 
