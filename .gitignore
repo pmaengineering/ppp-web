@@ -1,6 +1,7 @@
-*.py[cd]
 .*
 !.gitignore
 env/
 dev/
+logs/
+*.py[cd]
 test/files/ignored/*
