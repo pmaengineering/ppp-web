@@ -75,24 +75,20 @@ SERVE=cd webui/ && gunicorn --bind 0.0.0.0:8080 uwsgi:app \
 	--error-logfile ../logs/error-logfile.log \
 	--capture-output \
 	--pythonpath ../.venv/bin
-# Notes: (1) Use () syntax for subprocess, (2) leave off & to run in current terminal window.
-#	cd webui; \
-#	gunicorn -b 0.0.0.0:8080 uwsgi:app &
+# Notes:
+# (1) Use () syntax for subprocess,
+# (2) leave off & to run in current terminal window.
 serve-production:
-	(${SERVE} --env APP_SETTINGS=production)
-
+	(${SERVE} --env APP_SETTINGS=production &)
 serve-staging:
-	(${SERVE} --env APP_SETTINGS=staging)
-
+	(${SERVE} --env APP_SETTINGS=staging &)
 serve-local:
 	python webui/uwsgi.py
-
 serve:serve-production
 
 # - Connect
 production:
 	ssh root@192.155.80.11
-
 staging:
 	ssh root@172.104.31.28
 
