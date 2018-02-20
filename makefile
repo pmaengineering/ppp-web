@@ -18,7 +18,8 @@ DOC_TEST=${PYDOCSTYLE} ${TEST}
 MANAGE=${PYTHON} manage.py
 
 
-.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve shell db production staging gunicorn tags ltags
+.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-local serve-staging serve-production shell db production staging tags ltags upgrade-pmix-trunk-master upgrade-pmix-trunk-develop upgrade-pmix-joeflack4-master upgrade-pmix-joeflack4-develop upgrade-pmix upgrade-ppp-web-joeflack4-develop upgrade-ppp-web
+
 
 # ALL LINTING
 lint:
@@ -68,15 +69,57 @@ testdoc:
 
 
 # SERVER MANAGEMENT
-serve:
+# - Serve
+SERVE=cd webui/ && gunicorn --bind 0.0.0.0:8080 uwsgi:app \
+	--access-logfile ../logs/access-logfile.log \
+	--error-logfile ../logs/error-logfile.log \
+	--capture-output \
+	--pythonpath ../.venv/bin
+# Notes: (1) Use () syntax for subprocess, (2) leave off & to run in current terminal window.
+#	cd webui; \
+#	gunicorn -b 0.0.0.0:8080 uwsgi:app &
+serve-production:
+	(${SERVE} --env APP_SETTINGS=production)
+
+serve-staging:
+	(${SERVE} --env APP_SETTINGS=staging)
+
+serve-local:
 	python webui/uwsgi.py
 
-gunicorn:
-	cd webui; \
-	gunicorn -b 0.0.0.0:8080 uwsgi:app &
+serve:serve-production
 
+# - Connect
 production:
 	ssh root@192.155.80.11
+
+staging:
+	ssh root@172.104.31.28
+
+# - Dependency Management
+ACTIVATE=source .venv/bin/activate
+PIP=python -m pip install --upgrade git+https://github.com/
+UPGRADE=${ACTIVATE} && ${PIP}
+
+add-remotes:
+	git remote add trunk https://github.com/PMA-2020/ppp-web.git && \
+	git remote add joeflack4 https://github.com/joeflack4/ppp-web.git
+
+upgrade-pmix-trunk-master:
+	${UPGRADE}jkpr/pmix@master
+upgrade-pmix-trunk-develop:
+	${UPGRADE}jkpr/pmix@develop
+upgrade-pmix-joeflack4-master:
+	${UPGRADE}joeflack4/pmix@master
+upgrade-pmix-joeflack4-develop:
+	${UPGRADE}joeflack4/pmix@develop
+upgrade-pmix:upgrade-pmix-joeflack4-develop
+
+upgrade-ppp-web-joeflack4-develop:
+	git fetch --all && \
+	git rebase joeflack4/develop
+
+upgrade-ppp-web:upgrade-ppp-web-joeflack4-develop
 
 
 # CTAGS
