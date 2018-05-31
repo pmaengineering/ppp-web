@@ -163,10 +163,10 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
-        python_executable = config.python_executable
-        if 'DEPLOYMENT_ENV' in os.environ and os.environ['DEPLOYMENT_ENV']\
-                == 'development':
-            python_executable = 'python'
+        python_executable = 'python'
+        if 'SERVER_INFO' in os.environ and os.environ['SERVER_INFO'].lower()\
+                == 'linode':
+            python_executable = config.python_executable
 
         command_line = " ".join((
             python_executable,
