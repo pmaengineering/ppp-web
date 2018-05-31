@@ -18,7 +18,7 @@ DOC_TEST=${PYDOCSTYLE} ${TEST}
 MANAGE=${PYTHON} manage.py
 
 
-.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve shell db production staging gunicorn tags ltags
+.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-heroku-local shell db production staging gunicorn tags ltags
 
 # ALL LINTING
 lint:
@@ -70,6 +70,9 @@ testdoc:
 # SERVER MANAGEMENT
 serve:
 	python webui/uwsgi.py
+
+serve-heroku-local:
+	heroku local
 
 gunicorn:
 	cd webui; \
