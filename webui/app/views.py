@@ -2,8 +2,8 @@
 import os
 import shlex
 import subprocess
-import tempfile
-
+from tempfile import NamedTemporaryFile
+import ntpath
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -11,7 +11,9 @@ from flask import request
 from flask import send_file
 from flask import url_for
 from flask.views import MethodView
+from copy import copy
 
+# noinspection PyUnresolvedReferences,PyPackageRequirements
 from app import config  # TODO: Refactor to remove IDE error/run consistently.
 
 
@@ -28,41 +30,40 @@ class IndexView(MethodView):
         """POST request handler. Processes form data"""
 
         # check if user uploaded an excel file
-        file = request.files['file']
-        if file and '.xls' not in file.filename:  # TODO: Refactor, endswith.
+        uploaded_file = request.files['file']
+        if uploaded_file and not (uploaded_file.filename.endswith('.xls') or
+                                  uploaded_file.filename.endswith('.xlsx')):
             flash("Uploaded file is not an .xls or .xlsx file", "error")
             return redirect(url_for('index'))
 
-        # build dict for HTML conversions for future code simplicity
-        converters = {
-            'pdf': self._convert_to_pdf,
-            'doc': self._convert_to_doc
-        }
-
         # save file to /tmp folder
-        extension = os.path.splitext(file.filename)[1]
-        uploaded_file_path = tempfile.mktemp(suffix=extension)
-        file.save(uploaded_file_path)
+        temp_file = NamedTemporaryFile()
+        temp_file_name_w_extension = ntpath.basename(temp_file.name)
+        temp_file.name = temp_file.name\
+            .replace(temp_file_name_w_extension, uploaded_file.filename)
+        uploaded_file.save(temp_file.name)
 
         # get output format
         output_format = request.form.get('format')
-
+        output_ext = '.' + output_format
         # process output format and mime type for downloading
         post_process_to = None
         mime_type = 'text/html' if output_format == 'html'\
             else 'application/text'
-
         if output_format in ('pdf', 'doc'):
             post_process_to = output_format
-            output_format = 'html'
 
         # convert uploaded file to html
-        output_file_name = file.filename.replace('.xlsx', '')\
-                               .replace('.xls', '') + '.' + output_format
-        output_file_path = tempfile.mktemp(suffix=output_file_name)
-        command_line = self._build_pmix_ppp_tool_run_cmd(uploaded_file_path,
-                                                         output_format,
-                                                         output_file_path)
+        temp_html_file = NamedTemporaryFile()
+        html_file_path = copy(temp_file.name).replace('.xlsx', '')\
+            .replace('.xls', '') + '.' + 'html'
+        temp_html_file.name = html_file_path
+
+        # TODO 3: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
+        command_line = \
+            self._build_pmix_ppp_tool_run_cmd(in_file_path=temp_file.name,
+                                              out_format='html',
+                                              out_file_path=html_file_path)
         _, stderr = self._run_background_process(command_line)
 
         # if pmix.ppp tool wrote something to stderr, we should show it to user
@@ -70,31 +71,25 @@ class IndexView(MethodView):
             flash("STDERR:\n{}".format(stderr), "error")
             return redirect(url_for('index'))
 
-        # output_file_path now exists and refers to converted html file
-        # located at /tmp folder
-        file_path = output_file_path
-        file_name = output_file_name
+        # output path now exists and refers to converted html file at /tmp
+        pdf_doc_file_path = html_file_path
 
         # if output format is PDF or DOC
         if post_process_to:
-            converter = converters[post_process_to]
-
-            #DEBUG
-            print('\n')
-            print(output_file_path)
-            # print(dir(converter))
-            # from pdb import set_trace; set_trace()
-            print('\n\n')
-
-            file_name, file_path, mime_type = converter(output_file_path)  # TODO: Fix this error.
-            #DEBUG
-
+            converter = {
+                'pdf': self._convert_to_pdf,
+                'doc': self._convert_to_doc
+            }[post_process_to]
+            pdf_doc_file_name, pdf_doc_file_path, mime_type = \
+                converter(html_file_path)
 
         # return file as response attachment, so browser will start download
-        return send_file(file_path,
+        return send_file(pdf_doc_file_path,
                          as_attachment=True,
                          mimetype=mime_type,
-                         attachment_filename=file_name)
+                         attachment_filename=uploaded_file.filename
+                         .replace('.xlsx', output_ext)
+                         .replace('.xls', output_ext))
 
     def _convert_to_pdf(self, file_path):
         """This method converts .html file to .pdf file
