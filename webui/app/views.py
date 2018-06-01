@@ -57,7 +57,8 @@ class IndexView(MethodView):
             output_format = 'html'
 
         # convert uploaded file to html
-        output_file_name = file.filename + '.' + output_format
+        output_file_name = file.filename.replace('.xlsx', '')\
+                               .replace('.xls', '') + '.' + output_format
         output_file_path = tempfile.mktemp(suffix=output_file_name)
         command_line = self._build_pmix_ppp_tool_run_cmd(uploaded_file_path,
                                                          output_format,
@@ -103,7 +104,8 @@ class IndexView(MethodView):
         Returns:
              Path to converted file and mime type.
         """
-        pdf_file_path = file_path.replace('.html', '.pdf')
+        pdf_file_path = file_path.replace('.xlsx', '')\
+            .replace('.xls', '').replace('.html', '.pdf')
 
         # create command line string for html->pdf converter
         command_line = " ".join((
@@ -125,11 +127,13 @@ class IndexView(MethodView):
         Returns:
             path to renamed file and mime type for word files.
         """
-        doc_file_path = file_path.replace('.html', '.docx')
+        doc_file_path = file_path.replace('.xlsx', '')\
+            .replace('.xls', '').replace('.html', '.doc')
         os.rename(file_path, doc_file_path)
         _, doc_file_name = os.path.split(doc_file_path)
         mime_type = 'application/vnd.openxmlformats-officedocument.' \
                     'wordprocessingml.document'
+
         return doc_file_name, doc_file_path, mime_type
 
     @staticmethod
