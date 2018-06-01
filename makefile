@@ -70,7 +70,7 @@ testdoc:
 
 # SERVER MANAGEMENT
 # - Serve
-SERVE=cd webui/ && gunicorn --bind 0.0.0.0:8080 uwsgi:app \
+SERVE=cd webui/ && gunicorn --bind 0.0.0.0:5000 uwsgi:app \
 	--access-logfile ../logs/access-logfile.log \
 	--error-logfile ../logs/error-logfile.log \
 	--capture-output \
@@ -82,22 +82,25 @@ serve-production:
 	(${SERVE} --env APP_SETTINGS=production &)
 serve-staging:
 	(${SERVE} --env APP_SETTINGS=staging &)
-serve-local:
+serve-local-flask:
 	python webui/uwsgi.py
-serve:serve-production
-
 serve-heroku-local:
 	heroku local
-
 gunicorn:
 	cd webui; \
-	gunicorn -b 0.0.0.0:8080 uwsgi:app &
+	gunicorn -b 0.0.0.0:5000 uwsgi:app &
+serve:gunicorn
 
 # - Connect
 production:
 	ssh root@192.155.80.11
 staging:
 	ssh root@172.104.31.28
+
+logs:
+	heroku logs --app ppp-web
+logs-staging:
+	heroku logs --app ppp-web-staging
 
 # - Dependency Management
 ACTIVATE=source .venv/bin/activate
