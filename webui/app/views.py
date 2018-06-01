@@ -77,7 +77,17 @@ class IndexView(MethodView):
         # if output format is PDF or DOC
         if post_process_to:
             converter = converters[post_process_to]
-            file_name, file_path, mime_type = converter(output_file_path)
+
+            #DEBUG
+            print('\n')
+            print(output_file_path)
+            # print(dir(converter))
+            # from pdb import set_trace; set_trace()
+            print('\n\n')
+
+            file_name, file_path, mime_type = converter(output_file_path)  # TODO: Fix this error.
+            #DEBUG
+
 
         # return file as response attachment, so browser will start download
         return send_file(file_path,
@@ -93,7 +103,6 @@ class IndexView(MethodView):
         Returns:
              Path to converted file and mime type.
         """
-        # create output file path
         pdf_file_path = file_path.replace('.html', '.pdf')
 
         # create command line string for html->pdf converter
@@ -103,14 +112,10 @@ class IndexView(MethodView):
             pdf_file_path
         ))
 
-        # run converter
         self._run_background_process(command_line)
-
-        # get file name
         _, pdf_file_name = os.path.split(pdf_file_path)
         mime_type = 'text/pdf'
 
-        # return file name, path and mime type to be used in response
         return pdf_file_name, pdf_file_path, mime_type
 
     @staticmethod
@@ -120,16 +125,12 @@ class IndexView(MethodView):
         Returns:
             path to renamed file and mime type for word files.
         """
-
-        # get doc file path
         doc_file_path = file_path.replace('.html', '.docx')
-        # rename file
         os.rename(file_path, doc_file_path)
-        # get file name
         _, doc_file_name = os.path.split(doc_file_path)
         mime_type = 'application/vnd.openxmlformats-officedocument.' \
                     'wordprocessingml.document'
-        return doc_file_path, mime_type
+        return doc_file_name, doc_file_path, mime_type
 
     @staticmethod
     def _run_background_process(command_line):
