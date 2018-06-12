@@ -81,7 +81,7 @@ Edit config.py
 `/opt/ppp-web/webui $` `vim app/config.py`
 
 Set Python executable variable  
-`python_executable='/opt/ppp-web/.venv/bin/python3'`
+`PYTHON_PATH='/opt/ppp-web/.venv/bin/python3'`
 
 
 ##### Set execution flag for dependency *wkhtmltopdf*
@@ -95,7 +95,7 @@ Set Python executable variable
 #### 7. Run server process
 Run the app in background
 
-`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 uwsgi:app &`
+`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 run:app &`
 
 Open web interface at address
 
@@ -133,7 +133,7 @@ Add local changes to staging
 
 Commit local changes. If all you've done during/since deployment is change 
 config.py, the following message should do.  
-`git commit -m "Updated python_executable path in config.py during deployment 
+`git commit -m "Updated PYTHON_PATH path in config.py during deployment
 installation process."`
 
 #### Get remote changes
@@ -187,7 +187,7 @@ Merge in changes using rebase
 
 #### Run server process
 `cd /opt/ppp-web/webui`  
-`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 uwsgi:app &`
+`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 run:app &`
 
 ## Restarting the server 
 #### Find process ID  

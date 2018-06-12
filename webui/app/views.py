@@ -2,8 +2,10 @@
 import os
 import shlex
 import subprocess
-from tempfile import NamedTemporaryFile
 import ntpath
+from copy import copy
+from tempfile import NamedTemporaryFile
+
 from flask import flash
 from flask import redirect
 from flask import render_template
@@ -11,10 +13,9 @@ from flask import request
 from flask import send_file
 from flask import url_for
 from flask.views import MethodView
-from copy import copy
 
 # noinspection PyUnresolvedReferences,PyPackageRequirements
-from app import config  # TODO: Refactor to remove IDE error/run consistently.
+from app import app_config  # TODO: Refactor to removeIDE error/run consistent
 
 
 class IndexView(MethodView):
@@ -75,13 +76,25 @@ class IndexView(MethodView):
         pdf_doc_file_path = html_file_path
 
         # if output format is PDF or DOC
-        if post_process_to:
-            converter = {
-                'pdf': self._convert_to_pdf,
-                'doc': self._convert_to_doc
-            }[post_process_to]
+        if post_process_to == 'pdf':
+            try:
+                w_p = app_config.WKHTMLTOPDF_PATH_LOCAL
+                pdf_doc_file_name, pdf_doc_file_path, mime_type = \
+                    self._convert_to_pdf(_input=html_file_path,
+                                         wkhtmltopdf_path=w_p)
+            except OSError:
+                try:
+                    # w_p = app_config.WKHTMLTOPDF_PATH_SYSTEM
+                    w_p = 'hello'
+                    pdf_doc_file_name, pdf_doc_file_path, mime_type = \
+                        self._convert_to_pdf(_input=html_file_path,
+                                             wkhtmltopdf_path=w_p)
+                except FileNotFoundError:
+                    # TODO 4 - download and install a binary
+                    raise Exception('hello there')
+        elif post_process_to == 'doc':
             pdf_doc_file_name, pdf_doc_file_path, mime_type = \
-                converter(html_file_path)
+                self._convert_to_doc(_input=html_file_path)
 
         # return file as response attachment, so browser will start download
         return send_file(pdf_doc_file_path,
@@ -91,7 +104,7 @@ class IndexView(MethodView):
                          .replace('.xlsx', output_ext)
                          .replace('.xls', output_ext))
 
-    def _convert_to_pdf(self, file_path):
+    def _convert_to_pdf(self, _input, wkhtmltopdf_path):
         """This method converts .html file to .pdf file
 
         Uses external tool named `wkhtmltopdf`.
@@ -99,32 +112,40 @@ class IndexView(MethodView):
         Returns:
              Path to converted file and mime type.
         """
-        pdf_file_path = file_path.replace('.xlsx', '')\
-            .replace('.xls', '').replace('.html', '.pdf')
+        pdf_file_path = _input.replace('.html', '.pdf')
+
+        # TODO: fix errno8. set the following line in pmix?
+        # from pdb import set_trace; set_trace()
+        # os.chmod('a', 0b111101101)
+        # import stat
+        # os.chmod(app_config.WKHTMLTOPDF_PATH_LOCAL, 0b111101101)
+        # st = os.stat(app_config.WKHTMLTOPDF_PATH_LOCAL)
+        # os.chmod(
+        #     app_config.WKHTMLTOPDF_PATH_LOCAL, st.st_mode | stat.S_IEXEC)
 
         # create command line string for html->pdf converter
         command_line = " ".join((
-            config.wkhtmltopdf_executable,
-            file_path,
+            wkhtmltopdf_path,
+            _input,
             pdf_file_path
         ))
-
         self._run_background_process(command_line)
+
         _, pdf_file_name = os.path.split(pdf_file_path)
         mime_type = 'text/pdf'
 
         return pdf_file_name, pdf_file_path, mime_type
 
     @staticmethod
-    def _convert_to_doc(file_path):
+    def _convert_to_doc(_input):
         """This method renames .html file to .doc file.
 
         Returns:
             path to renamed file and mime type for word files.
         """
-        doc_file_path = file_path.replace('.xlsx', '')\
+        doc_file_path = _input.replace('.xlsx', '')\
             .replace('.xls', '').replace('.html', '.doc')
-        os.rename(file_path, doc_file_path)
+        os.rename(_input, doc_file_path)
         _, doc_file_name = os.path.split(doc_file_path)
         mime_type = 'application/vnd.openxmlformats-officedocument.' \
                     'wordprocessingml.document'
@@ -163,13 +184,13 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
-        python_executable = 'python'
+        python_path = 'python'  # TODO move this into the config file
         if 'SERVER_INFO' in os.environ and os.environ['SERVER_INFO'].lower()\
                 == 'linode':
-            python_executable = config.python_executable
+            python_path = app_config.PYTHON_PATH
 
         command_line = " ".join((
-            python_executable,
+            python_path,
             '-m pmix.ppp',
             in_file_path,
             "-l " + language,

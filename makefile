@@ -70,7 +70,7 @@ testdoc:
 
 # SERVER MANAGEMENT
 # - Serve
-SERVE=cd webui/ && gunicorn --bind 0.0.0.0:5000 uwsgi:app \
+SERVE=cd webui/ && gunicorn --bind 0.0.0.0:5000 run:app \
 	--access-logfile ../logs/access-logfile.log \
 	--error-logfile ../logs/error-logfile.log \
 	--capture-output \
@@ -83,12 +83,12 @@ serve-production:
 serve-staging:
 	(${SERVE} --env APP_SETTINGS=staging &)
 serve-local-flask:
-	python webui/uwsgi.py
+	python webui/run.py
 serve-heroku-local:
 	heroku local
 gunicorn:
 	cd webui; \
-	gunicorn -b 0.0.0.0:5000 uwsgi:app &
+	gunicorn -b 0.0.0.0:5000 run:app &
 serve:gunicorn
 
 # - Connect
