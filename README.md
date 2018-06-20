@@ -71,7 +71,7 @@ Install pmix package
 
 `/opt/ppp-web $ pip3 install https://github.com/<git-suburl>`  
 > **Examples**
-> `pip3 install https://github.com/jkpr/pmix/archive/develop.zip`
+> `pip3 install https://github.com/PMA-2020/ppp/archive/develop.zip`
 > `pip3 install https://github.com/joeflack4/pmix/archive/ppp.zip`
 
 #### 5. Required Configuration
