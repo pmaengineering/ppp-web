@@ -62,17 +62,17 @@ Install project dependencies
 
 Install pmix package
 
-`/opt/ppp-web $ pip install -r https://raw.githubusercontent.com/<git-suburl>/requirements.txt`  
+`/opt/ppp-web $ pip3 install -r https://raw.githubusercontent.com/<git-suburl>/requirements.txt`  
 > **Example**  
-> `pip install -r https://raw.githubusercontent.com/PMA-2020/ppp/develop/requirements.txt`
+> `pip3 install -r https://raw.githubusercontent.com/PMA-2020/ppp/develop/requirements.txt`
 
 > **Note**  
 > You may experience a `DistutilsError` related to the `cairocffi` package. If this occurs, it is likely OK to ignore, as this is a peer dependency and not required for PPP-Web.
 
-`/opt/ppp-web $ pip install https://github.com/<git-suburl>`  
+`/opt/ppp-web $ pip3 install https://github.com/<git-suburl>`  
 > **Examples**
-> `pip install https://github.com/jkpr/pmix/archive/develop.zip`
-> `pip install https://github.com/joeflack4/pmix/archive/ppp.zip`
+> `pip3 install https://github.com/jkpr/pmix/archive/develop.zip`
+> `pip3 install https://github.com/joeflack4/pmix/archive/ppp.zip`
 
 #### 5. Required Configuration
 ##### Change Python executable path
