@@ -127,8 +127,8 @@ class IndexView(MethodView):
         # create command line string for html->pdf converter
         command_line = " ".join((
             wkhtmltopdf_path,
-            _input,
-            pdf_file_path
+            quote(_input),
+            quote(pdf_file_path)
         ))
         self._run_background_process(command_line)
 
