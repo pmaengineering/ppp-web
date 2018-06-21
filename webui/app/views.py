@@ -5,6 +5,7 @@ import subprocess
 import ntpath
 from copy import copy
 from tempfile import NamedTemporaryFile
+from shlex import quote
 
 from flask import flash
 from flask import redirect
@@ -192,11 +193,11 @@ class IndexView(MethodView):
         command_line = " ".join((
             python_path,
             '-m pmix.ppp',
-            in_file_path,
+            quote(in_file_path),
             "-l " + language,
             "-f " + out_format,
             *('--{}'.format(option) for option in options),
-            "-o " + out_file_path
+            "-o " + quote(out_file_path)
         ))
 
         return command_line
