@@ -126,8 +126,8 @@ class IndexView(MethodView):
         # create command line string for html->pdf converter
         command_line = " ".join((
             wkhtmltopdf_path,
-            _input,
-            pdf_file_path
+            shlex.quote(_input),
+            shlex.quote(pdf_file_path)
         ))
         self._run_background_process(command_line)
 
@@ -192,11 +192,11 @@ class IndexView(MethodView):
         command_line = " ".join((
             python_path,
             '-m pmix.ppp',
-            in_file_path,
+            shlex.quote(in_file_path),
             "-l " + language,
             "-f " + out_format,
             *('--{}'.format(option) for option in options),
-            "-o " + out_file_path
+            "-o " + shlex.quote(out_file_path)
         ))
 
         return command_line
