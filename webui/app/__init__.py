@@ -1,18 +1,13 @@
 """
 module contains functions for creating and configuring a flask app
 """
+import os
+
 from flask import Flask
 
-from app import config
-
-
-def configure_app(app):
-    """
-    configure application with config file
-    Args:
-        app: flask application
-    """
-    app.config.from_object(config)
+from .config import config
+default_config_name = os.getenv('FLASK_CONFIG', 'default')
+app_config = config[default_config_name]
 
 
 def add_views(_app):
@@ -21,14 +16,14 @@ def add_views(_app):
     Args:
         _app: flask application
     """
-    from app.views import IndexView
+    from .views import IndexView
 
     _app.add_url_rule('/', view_func=IndexView.as_view('index'))
 
 
-def create_app():
+def create_app(config_name=default_config_name):
     """create, configure and return a flask app"""
     app = Flask(__name__)
-    configure_app(app)
+    app.config.from_object(config[config_name])
     add_views(app)
     return app
