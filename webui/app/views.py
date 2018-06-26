@@ -114,15 +114,6 @@ class IndexView(MethodView):
         """
         pdf_file_path = _input.replace('.html', '.pdf')
 
-        # TODO: fix errno8. set the following line in pmix?
-        # from pdb import set_trace; set_trace()
-        # os.chmod('a', 0b111101101)
-        # import stat
-        # os.chmod(app_config.WKHTMLTOPDF_PATH_LOCAL, 0b111101101)
-        # st = os.stat(app_config.WKHTMLTOPDF_PATH_LOCAL)
-        # os.chmod(
-        #     app_config.WKHTMLTOPDF_PATH_LOCAL, st.st_mode | stat.S_IEXEC)
-
         # create command line string for html->pdf converter
         command_line = " ".join((
             wkhtmltopdf_path,
@@ -191,7 +182,7 @@ class IndexView(MethodView):
 
         command_line = " ".join((
             python_path,
-            '-m pmix.ppp',
+            '-m ppp',
             shlex.quote(in_file_path),
             "-l " + language,
             "-f " + out_format,
