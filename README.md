@@ -10,7 +10,7 @@ for conversion to HTML, PDF of DOC format.
 #### UI libraries:
 - [Twitter Bootstrap](http://getbootstrap.com/)
 - [Bootstrap File Input](http://plugins.krajee.com/file-input)
-- [jQuery v2.2.4](https://jquery.com/)
+- [jQuery v3.2.1](https://jquery.com/)
 - [Notify.js](https://notifyjs.com/)
 
 #### Backend libraries:
