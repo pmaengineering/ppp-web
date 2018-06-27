@@ -53,12 +53,12 @@ This deployment guide is written for [*Ubuntu*](https://www.linode.com/docs/gett
 
 `/opt/ppp-web $` `source .venv/bin/activate`
 
-`/opt/ppp-web $` `pip install --upgrade pip`
+`/opt/ppp-web $` `pip3 install --upgrade pip3`
 
 #### 4. Dependencies
 Install project dependencies
 
-`/opt/ppp-web $` `pip install -r requirements.txt`
+`/opt/ppp-web $` `pip3 install -r requirements.txt`
 
 Install pmix package
 
@@ -164,10 +164,10 @@ Merge in changes using rebase
 > Common Workflows > [Activate virtual environment](#activate-virtual-environment)
 
 #### Upgrade dependency
-`python -m pip install <url-to-dependency> --upgrade`
+`python3 -m pip3 install <url-to-dependency> --upgrade`
 
 > **Example**
-> `python -m pip install git+https://github.com/jkpr/pmix@develop --upgrade` 
+> `python3 -m pip3 install git+https://github.com/jkpr/pmix@develop --upgrade` 
 
 #### Restart server
 > Common Workflows > [Restart server](#restarting-the-server)
