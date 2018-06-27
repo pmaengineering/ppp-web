@@ -37,7 +37,7 @@ This deployment guide is written for [*Ubuntu*](https://www.linode.com/docs/gett
 > **Note**  
 > Ubuntu may prompt you when the Grub package is updated. If prompted, select keep the local version currently installed.
 
-`apt-get install htop libfontconfig1 libxrender1 python3-pip python3-dev python3-venv nginx git vim`
+`apt-get install htop libfontconfig1 libxrender1 python3-pip python3-dev python3-venv nginx git`
 
 #### 2. Clone project from repo
 
@@ -78,7 +78,7 @@ Install pmix package
 ##### Change Python executable path
 Edit config.py  
 `/opt/ppp-web $` `cd webui`  
-`/opt/ppp-web/webui $` `vim app/config.py`
+`/opt/ppp-web/webui $` `nano app/config.py`
 
 Set Python executable variable  
 `PYTHON_PATH='/opt/ppp-web/.venv/bin/python3'`
