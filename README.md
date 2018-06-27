@@ -70,7 +70,7 @@ Install pmix package
 > You may experience a `DistutilsError` related to the `cairocffi` package. If this occurs, it is likely OK to ignore, as this is a peer dependency and not required for PPP-Web.
 
 `/opt/ppp-web $ pip3 install https://github.com/<git-suburl>`  
-> **Examples**
+> **Examples**  
 > `pip3 install https://github.com/PMA-2020/ppp/archive/develop.zip`
 > `pip3 install https://github.com/joeflack4/pmix/archive/ppp.zip`
 
