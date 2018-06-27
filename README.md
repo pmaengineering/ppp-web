@@ -195,7 +195,7 @@ The server that PPP-Web uses is called "gunicorn", so...
 `ps -e | grep gunicorn`  
 
 #### Kill process  
-`kill -9 <ID>`, where "<ID>" is the one found in previous step.
+`kill -9 <ID>`, where `<ID>` is the one found in previous step.
 #### Start new process
 > Common Workflows > [Starting the server](#starting-the-server)
 
