@@ -17,5 +17,6 @@ Werkzeug==0.12.2
 wrapt==1.10.11
 xlrd==1.1.0
 XlsxWriter==1.0.0
-https://github.com/joeflack4/pmix/zipball/working_ppp
+odk-ppp
+# https://github.com/joeflack4/pmix/zipball/working_ppp
 # https://github.com/jkpr/pmix/zipball/develop
