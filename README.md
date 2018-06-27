@@ -37,7 +37,7 @@ This deployment guide is written for [*Ubuntu*](https://www.linode.com/docs/gett
 > **Note**  
 > Ubuntu may prompt you when the Grub package is updated. If prompted, select keep the local version currently installed.
 
-`apt-get install libfontconfig1 libxrender1 python3-pip python3-dev python3-venv gunicorn git`
+`apt-get install libfontconfig1 libxrender1 python3-pip python3-dev python3-venv git`
 
 #### 2. Clone project from repo
 
