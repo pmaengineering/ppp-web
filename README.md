@@ -177,8 +177,8 @@ Merge in changes using rebase
 ## Logging in to server
 `ssh <server>` and enter password when prompted. 
 
-> **Examples**
-> Production: `root@192.155.80.11`
+> **Examples**  
+> Production: `root@192.155.80.11`  
 > Staging: `root@172.104.31.28`
 
 ## Starting the server
