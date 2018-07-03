@@ -163,15 +163,8 @@ Merge in changes using rebase
 > Common Workflows > [Logging in to server](#logging-in-to-server)  
 > Common Workflows > [Activate virtual environment](#activate-virtual-environment)
 
-#### Upgrade dependency
-`python3 -m pip3 install <url-to-dependency> --upgrade`
-
-> **Example**
-> `python3 -m pip3 install git+https://github.com/jkpr/pmix@develop --upgrade` 
-
 #### Restart server
 > Common Workflows > [Restart server](#restarting-the-server)
-
 
 # Common Workflows
 ## Logging in to server
