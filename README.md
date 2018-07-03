@@ -56,15 +56,7 @@ This deployment guide is written for [*Ubuntu*](https://www.linode.com/docs/gett
 `/opt/ppp-web $` `pip3 install --upgrade pip3`
 
 #### 4. Dependencies
-Install project dependencies
-
 `/opt/ppp-web $` `pip3 install -r requirements.txt`
-
-Install pmix package
-
-`/opt/ppp-web $ pip3 install -r https://raw.githubusercontent.com/<git-suburl>/requirements.txt`  
-> **Example**  
-> `pip3 install -r https://raw.githubusercontent.com/PMA-2020/ppp/develop/requirements.txt`
 
 > **Note**  
 > You may experience a `DistutilsError` related to the `cairocffi` package. If this occurs, it is likely OK to ignore, as this is a peer dependency and not required for PPP-Web.
