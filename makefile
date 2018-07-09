@@ -18,7 +18,7 @@ DOC_TEST=${PYDOCSTYLE} ${TEST}
 MANAGE=${PYTHON} manage.py
 
 
-.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-local serve-heroku-local serve-staging serve-production shell db production staging tags ltags upgrade-pmix-trunk-master upgrade-pmix-trunk-develop upgrade-pmix-joeflack4-master upgrade-pmix-joeflack4-develop upgrade-pmix upgrade-ppp-web-joeflack4-develop upgrade-ppp-web activate
+.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-local serve-heroku-local serve-staging-linode serve-production-linode serve-production-heroku serve-production serve-staging-heroku serve-staging shell db production staging production-linode staging-linode tags ltags upgrade-pmix-trunk-master upgrade-pmix-trunk-develop upgrade-pmix-joeflack4-master upgrade-pmix-joeflack4-develop upgrade-pmix upgrade-ppp-web-joeflack4-develop upgrade-ppp-web activate
 
 
 # ALL LINTING
@@ -69,18 +69,26 @@ testdoc:
 
 
 # SERVER MANAGEMENT
-# - Serve
+# Notes for Linode
+# (1) Use () syntax for subprocess,
+# (2) leave off & to run in current terminal window.
+# - Pushing & Serving
 SERVE=cd webui/ && gunicorn --bind 0.0.0.0:5000 run:app \
 	--access-logfile ../logs/access-logfile.log \
 	--error-logfile ../logs/error-logfile.log \
 	--capture-output \
 	--pythonpath ../.venv/bin
-# Notes:
-# (1) Use () syntax for subprocess,
-# (2) leave off & to run in current terminal window.
-serve-production:
+serve-production-heroku:
+	git checkout master && git branch -D production && git checkout -b production && git push trunk production -uf
+serve-staging-heroku:
+	git checkout develop && git branch -D staging && git checkout -b staging && git push trunk staging -uf
+serve-production: serve-production-heroku
+serve-staging: serve-staging-heroku
+production: serve-production-heroku
+staging: serve-staging-heroku
+serve-production-linode:
 	(${SERVE} --env APP_SETTINGS=production &)
-serve-staging:
+serve-staging-linode:
 	(${SERVE} --env APP_SETTINGS=staging &)
 serve-local-flask:
 	python webui/run.py
@@ -91,10 +99,10 @@ gunicorn:
 	gunicorn -b 0.0.0.0:5000 run:app &
 serve:gunicorn
 
-# - Connect
-production:
+# - SSH
+production-connect-linode:
 	ssh root@192.155.80.11
-staging:
+staging-connect-linode:
 	ssh root@172.104.31.28
 
 logs:
@@ -113,23 +121,6 @@ activate:
 add-remotes:
 	git remote add trunk https://github.com/PMA-2020/ppp-web.git && \
 	git remote add joeflack4 https://github.com/joeflack4/ppp-web.git
-
-upgrade-pmix-trunk-master:
-	${UPGRADE}jkpr/pmix@master
-upgrade-pmix-trunk-develop:
-	${UPGRADE}jkpr/pmix@develop
-upgrade-pmix-joeflack4-master:
-	${UPGRADE}joeflack4/pmix@master
-upgrade-pmix-joeflack4-develop:
-	${UPGRADE}joeflack4/pmix@develop
-upgrade-pmix:upgrade-pmix-joeflack4-develop
-
-upgrade-ppp-web-joeflack4-develop:
-	git fetch --all && \
-	git rebase joeflack4/develop
-
-upgrade-ppp-web:upgrade-ppp-web-joeflack4-develop
-
 
 # CTAGS
 tags:
