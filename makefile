@@ -1,4 +1,5 @@
-PYTHON=./env/bin/python3
+#PYTHON=./env/bin/python3
+PYTHON=python3
 SRC=./webui/
 TEST=./test/
 
@@ -18,7 +19,7 @@ DOC_TEST=${PYDOCSTYLE} ${TEST}
 MANAGE=${PYTHON} manage.py
 
 
-.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-local serve-heroku-local serve-staging-linode serve-production-linode serve-production-heroku serve-production serve-staging-heroku serve-staging shell db production staging production-linode staging-linode tags ltags upgrade-pmix-trunk-master upgrade-pmix-trunk-develop upgrade-pmix-joeflack4-master upgrade-pmix-joeflack4-develop upgrade-pmix upgrade-ppp-web-joeflack4-develop upgrade-ppp-web activate
+.PHONY: lint linttest lintall pylint pylinttest pylintall code codetest codeall doc doctest docall test testdoc serve serve-local serve-heroku-local serve-staging-linode serve-production-linode serve-production-heroku serve-production serve-staging-heroku serve-staging shell db production staging production-linode staging-linode tags ltags upgrade-pmix-trunk-master upgrade-pmix-trunk-develop upgrade-pmix-joeflack4-master upgrade-pmix-joeflack4-develop upgrade-pmix upgrade-ppp-web-joeflack4-develop upgrade-ppp-web activate upgrade-ppp
 
 
 # ALL LINTING
@@ -114,17 +115,16 @@ logs-staging:
 ACTIVATE=source .venv/bin/activate
 PIP=python -m pip install --upgrade git+https://github.com/
 UPGRADE=${ACTIVATE} && ${PIP}
-
 activate:
 	${ACTIVATE}
-
 add-remotes:
 	git remote add trunk https://github.com/PMA-2020/ppp-web.git && \
 	git remote add joeflack4 https://github.com/joeflack4/ppp-web.git
+upgrade-ppp:
+	${PYTHON} -m pip uninstall odk-ppp && ${PYTHON} -m pip install --no-cache-dir --upgrade odk-ppp
 
 # CTAGS
 tags:
 	ctags -R --python-kinds=-i .
-
 ltags:
 	ctags -R --python-kinds=-i ./${CODE_SRC}
