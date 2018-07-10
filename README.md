@@ -1,8 +1,23 @@
-# PPP-Web
-Web server and client application for Pretty PDF Printer, a package to convert ODK XlsForms to human readable formats.
+# PPP
+## About
+PPP is a project with the purpose of helping people convert XlsForm Excel files into more human-readable, printable formats, commonly called "paper questionnaires". Officially, PPP stands for "Pretty PDF Printer", but other formats are supported. The project consists of...
 
+- A [web application](https://github.com/pma-2020/ppp)
+- A [command line tool](https://github.com/pma-2020/ppp-web)
 
-# Application Internals
+Both tools are open source and free to install. You can also use it online with no installation necessary, at http://ppp.pma2020.org.
+
+#### Samples
+Source Excel file: [demo.xlsx](./docs/demo.xlsx)
+Converted to PDF: [demo.pdf](docs/demo.pdf)
+Converted to DOC: [demo.doc](docs/demo.doc)
+Manually saved as DOCX from DOC: [demo.docx](docs/demo.docx)
+Converted to HTML: [demo.html](docs/demo.html)
+
+**Example Screenshot**
+![demo.png](docs/demo.png)
+
+## Application Internals
 
 Application contains only one page with web form, where user can upload an ODK XlsForms file
 for conversion to HTML, PDF of DOC format.
@@ -104,8 +119,8 @@ Open web interface at address
 You're finished!
 
 
-# Maintenance
-## Upgrading PPP-Web
+## Maintenance
+### Upgrading PPP-Web
 #### Log in to server & activate environment
 > Common Workflows > [Logging in to server](#logging-in-to-server)  
 > Common Workflows > [Activate virtual environment](#activate-virtual-environment)
@@ -158,7 +173,7 @@ Merge in changes using rebase
 #### [Start](#starting-the-server) or [restart](#restarting-the-server) server
 > Common Workflows > [Starting the server](#starting-the-server)
 
-## Upgrading Dependencies
+### Upgrading Dependencies
 #### Log in to server & activate environment
 > Common Workflows > [Logging in to server](#logging-in-to-server)  
 > Common Workflows > [Activate virtual environment](#activate-virtual-environment)
@@ -173,15 +188,15 @@ Merge in changes using rebase
 > Common Workflows > [Restart server](#restarting-the-server)
 
 
-# Common Workflows
-## Logging in to server
+## Common Workflows
+### Logging in to server
 `ssh <server>` and enter password when prompted. 
 
 > **Examples**
 > Production: `root@192.155.80.11`
 > Staging: `root@172.104.31.28`
 
-## Starting the server
+### Starting the server
 #### Activate environment
 > Common Workflows > [Activate virtual environment](#activate-virtual-environment)
 
@@ -189,7 +204,7 @@ Merge in changes using rebase
 `cd /opt/ppp-web/webui`  
 `/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 run:app &`
 
-## Restarting the server 
+### Restarting the server
 #### Find process ID  
 The server that PPP-Web uses is called "gunicorn", so...  
 `ps -e | grep gunicorn`  
@@ -199,6 +214,6 @@ The server that PPP-Web uses is called "gunicorn", so...
 #### Start new process
 > Common Workflows > [Starting the server](#starting-the-server)
 
-## Activate virtual environment
+### Activate virtual environment
 `cd /opt/ppp-web`  
 `/opt/ppp-web $` `source .venv/bin/activate`
