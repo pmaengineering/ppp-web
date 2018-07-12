@@ -1,8 +1,8 @@
 .*
 !.gitignore
+!.circleci/
 dev/
 env/
 logs/
 *.py[cd]
->>>>>>> develop
 test/files/ignored/*
