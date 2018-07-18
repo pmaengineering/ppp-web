@@ -1,55 +1,102 @@
 # Python CircleCI 2.0 configuration file
 #
 # Check https://circleci.com/docs/2.0/language-python/ for more details
+# Examples https://circleci.com/docs/2.0/sample-config/
 #
-version: 2
+version: 2 # Uses CircleCI 2.0
 jobs:
   build:
-    # docker:
-      # specify the version you desire here
-      # use `-browsers` prefix for selenium tests, e.g. `3.6.1-browsers`
-      # - image: circleci/python:3.6.1
-      
-      # Specify service dependencies here if necessary
-      # CircleCI maintains a library of pre-built images
-      # documented at https://circleci.com/docs/2.0/circleci-images/
-      # - image: circleci/postgres:9.4
-
-    working_directory: .
-
+    docker:
+      # Primary container where `steps` are run
+      # - use `-browsers` prefix for selenium tests, e.g. `circleci/python:3.6.1-browsers`
+      - image: circleci/python:3.6.1 # 2 spaces after this -
+        environment:
+          # Separate environment variables should not matter for CircleCI build, because Heroku has its own env variables setup.
+          # For more information, however, on dynamic env variables, see: https://discuss.circleci.com/t/per-branch-env-vars/13214
+          APP_SETTINGS: production
+          FLASK_APP: production
+          FLASK_CONFIG: production
     steps:
+      # special step to check out source code to the working directory
       - checkout
 
       # Download and cache dependencies
-      - restore_cache:
+      # restores saved dependency cache if the Branch key template or requirements.txt files have not changed since the previous run
+      - restore_cache: # 4 spaces after this -
           keys:
-          - v1-dependencies-{{ checksum "requirements.txt" }}
-          # fallback to using the latest cache if no exact match is found
-          - v1-dependencies-
+            - v1-dependencies-{{ checksum "requirements.txt" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
 
-      - run:
+      # Used 'env' for virtual environment name per PMA2020 convention, as opposed to CircleCI's default name 'venv'.
+      - run: # 4 spaces after this -
           name: install dependencies
           command: |
-            # python3 -m venv venv
-            # . venv/bin/activate
+            python3 -m venv env
+            . env/bin/activate
             pip install -r requirements.txt
 
-      - save_cache:
+      - save_cache: # special step to save dependency cache
           paths:
-            - ./venv
+            - ./env
           key: v1-dependencies-{{ checksum "requirements.txt" }}
-        
-      # run tests!
-      # this example uses Django's built-in test-runner
-      # other common Python testing frameworks include pytest and nose
-      # https://pytest.org
-      # https://nose.readthedocs.io
+
       - run:
           name: run tests
           command: |
-            echo Placeholder.
-            echo Build OK!
+            . env/bin/activate
+            make test
 
       - store_artifacts:
           path: test-reports
           destination: test-reports
+
+  # CI deployment setup notes
+  # - https://circleci.com/docs/2.0/deployment-integrations/#heroku
+  # - https://circleci.com/docs/2.0/project-walkthrough/#deploying-to-heroku
+  # - https://circleci.com/docs/2.0/env-vars/#setting-an-environment-variable-in-a-project
+  deploy-staging:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Deploy staging branch staging server.
+          command: |
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME_STAGING.git master -f
+
+  deploy-production:
+    machine: true
+    steps:
+      - checkout
+      - run:
+          name: Deploy production branch production server.
+          command: |
+            git push https://heroku:$HEROKU_API_KEY@git.heroku.com/$HEROKU_APP_NAME_PRODUCTION.git master -f
+
+workflows:
+  version: 2
+  build-deploy:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - master
+                - develop
+                - /pr*/
+                - staging
+                - production
+      - deploy-production:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - production
+      - deploy-staging:
+          requires:
+            - build
+          filters:
+            branches:
+              only:
+                - staging
