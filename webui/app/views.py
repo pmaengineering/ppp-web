@@ -4,6 +4,7 @@ import shlex
 import subprocess
 import ntpath
 from copy import copy
+from platform import platform
 from tempfile import NamedTemporaryFile
 
 from flask import flash
@@ -14,8 +15,12 @@ from flask import send_file
 from flask import url_for
 from flask.views import MethodView
 
-# noinspection PyUnresolvedReferences,PyPackageRequirements
-from app import app_config  # TODO: Refactor to removeIDE error/run consistent
+# TODO: Refactor to run consistently wherever (browser, test suite, etc)
+try:
+    # noinspection PyUnresolvedReferences,PyPackageRequirements
+    from app import app_config, version
+except ModuleNotFoundError:
+    from webui.app import app_config, version
 
 
 class IndexView(MethodView):
@@ -25,7 +30,9 @@ class IndexView(MethodView):
     @staticmethod
     def get():
         """Get method."""
-        return render_template('index.html')
+        return render_template('index.html',
+                               version=version,
+                               title='PPP for Open Data Kit')
 
     def post(self):
         """POST request handler. Processes form data"""
@@ -60,7 +67,7 @@ class IndexView(MethodView):
             .replace('.xls', '') + '.' + 'html'
         temp_html_file.name = html_file_path
 
-        # TODO 3: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
+        # TODO: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
         command_line = \
             self._build_pmix_ppp_tool_run_cmd(in_file_path=temp_file.name,
                                               out_format='html',
@@ -84,14 +91,19 @@ class IndexView(MethodView):
                                          wkhtmltopdf_path=w_p)
             except OSError:
                 try:
+                    # TODO: This hasn't been fully implementaed
+                    w_p = 'This hasnt been implemented yet. My WKTHMLTOPDF ' \
+                          'is installed globally. This message will throw ' \
+                          'an error.'
                     # w_p = app_config.WKHTMLTOPDF_PATH_SYSTEM
-                    w_p = 'hello'
                     pdf_doc_file_name, pdf_doc_file_path, mime_type = \
                         self._convert_to_pdf(_input=html_file_path,
                                              wkhtmltopdf_path=w_p)
                 except FileNotFoundError:
-                    # TODO 4 - download and install a binary
-                    raise Exception('hello there')
+                    # TODO: download and install a binary
+                    msg = 'PDF conversion is currently not supported for ' \
+                          'this system: {}'.format(platform())
+                    raise Exception(msg)
         elif post_process_to == 'doc':
             pdf_doc_file_name, pdf_doc_file_path, mime_type = \
                 self._convert_to_doc(_input=html_file_path)

@@ -37,10 +37,14 @@ $(document).ready(function () {
         setTimeout(function () {
             // enable submit button
             $(event.target).prop("disabled", false);
+            
             // set default output format
-            $("#btnHtmlFormat").click();
+            // $("#btnHtmlFormat").click();
+            $("#btnDocFormat").click();
+            
             // set default preset
             $("#btnDevPreset").click();
+            
             // reset the form fields. here ".get(0)" will return a plain
             // javascript dom object instead of jquery object
             $("#form").get(0).reset();
