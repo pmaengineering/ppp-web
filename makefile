@@ -117,8 +117,14 @@ serve-dev-network-accessible:
 serve:gunicorn
 serve-dev: serve-local-flask
 production-push:
-	git checkout production && \
-	git push trunk production
+	git status && \
+	printf "\nGit status should have reported 'nothing to commit, working tree\
+	 clean'. Otherwise you should cancel this command, make sure changes are\
+	  committed, and run it again.\n\n" && \
+	git checkout master && \
+	git branch -D production && \
+	git checkout -b production && \
+	git push -u trunk production --force
 staging-push:
 	git status && \
 	printf "\nGit status should have reported 'nothing to commit, working tree\
