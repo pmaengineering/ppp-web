@@ -187,10 +187,11 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
-        python_path = 'python'  # TODO move this into the config file
         if 'SERVER_INFO' in os.environ and os.environ['SERVER_INFO'].lower()\
                 == 'linode':
-            python_path = app_config.PYTHON_PATH
+            python_path = app_config.PYTHON_PATH['linode']
+        else:
+            python_path = app_config.PYTHON_PATH['default']
 
         command_line = " ".join((
             python_path,
