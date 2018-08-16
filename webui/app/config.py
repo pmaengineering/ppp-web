@@ -12,10 +12,11 @@ class Config:
     WKHTMLTOPDF_PATH_LOCAL = os.path.join(bin_dir, 'wkhtmltopdf')
     WKHTMLTOPDF_PATH_SYSTEM = \
         os.getenv('WKHTMLTOPDF_PATH_SYSTEM', 'wkhtmltopdf')
-    PYTHON_PATH = {
-        'default': 'python3',
-        'linode': '/home/pydevd/projects/conv-webui/.venv/bin/python3'
-    }
+    # IMPORTANT
+    # Change PYTHON_PATH below to the yours system path.
+    # The value already provided will not work on your computer.
+    # Using just "python" or "python3" may work.
+    PYTHON_PATH = '/home/pydevd/projects/conv-webui/.venv/bin/python3'
 
     THREADS_PER_PAGE = 2
     CSRF_ENABLED = True

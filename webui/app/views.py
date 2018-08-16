@@ -187,14 +187,8 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
-        if 'SERVER_INFO' in os.environ and os.environ['SERVER_INFO'].lower()\
-                == 'linode':
-            python_path = app_config.PYTHON_PATH['linode']
-        else:
-            python_path = app_config.PYTHON_PATH['default']
-
         command_line = " ".join((
-            python_path,
+            app_config.PYTHON_PATH,
             '-m ppp',
             shlex.quote(in_file_path),
             "-l " + language,
