@@ -6,6 +6,7 @@ import ntpath
 from copy import copy
 from platform import platform
 from tempfile import NamedTemporaryFile
+from subprocess import call
 
 from flask import flash
 from flask import redirect
@@ -187,8 +188,14 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
+        python = os.getenv('PYTHON_PATH', 'python3')
+        try:
+          subprocess.call([python, "--version"], stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        except:
+          python = 'python'
+
         command_line = " ".join((
-            app_config.PYTHON_PATH,
+            python,
             '-m ppp',
             shlex.quote(in_file_path),
             "-l " + language,
