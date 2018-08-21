@@ -188,14 +188,14 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
-        python = os.getenv('PYTHON_PATH', 'python3')
+        python_path = os.getenv('PYTHON_PATH', 'python3')
         try:
-          subprocess.call([python, "--version"], stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+          subprocess.call([python_path, "--version"], stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
         except:
-          python = 'python'
+          python_path = 'python'
 
         command_line = " ".join((
-            python,
+            python_path,
             '-m ppp',
             shlex.quote(in_file_path),
             "-l " + language,
