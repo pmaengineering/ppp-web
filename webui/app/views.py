@@ -6,6 +6,7 @@ import ntpath
 from copy import copy
 from platform import platform
 from tempfile import NamedTemporaryFile
+from subprocess import call
 
 from flask import flash
 from flask import redirect
@@ -187,10 +188,11 @@ class IndexView(MethodView):
         if preset != 'custom':
             options = ['preset ' + preset]
 
-        python_path = 'python'  # TODO move this into the config file
-        if 'SERVER_INFO' in os.environ and os.environ['SERVER_INFO'].lower()\
-                == 'linode':
-            python_path = app_config.PYTHON_PATH
+        python_path = os.getenv('PYTHON_PATH', 'python3')
+        try:
+          subprocess.call([python_path, "--version"], stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
+        except:
+          python_path = 'python'
 
         command_line = " ".join((
             python_path,
