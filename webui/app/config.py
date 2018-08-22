@@ -12,9 +12,6 @@ class Config:
     WKHTMLTOPDF_PATH_LOCAL = os.path.join(bin_dir, 'wkhtmltopdf')
     WKHTMLTOPDF_PATH_SYSTEM = \
         os.getenv('WKHTMLTOPDF_PATH_SYSTEM', 'wkhtmltopdf')
-    PYTHON_PATH = {
-        'linode': '/home/pydevd/projects/conv-webui/.venv/bin/python3'
-    }['linode']
 
     THREADS_PER_PAGE = 2
     CSRF_ENABLED = True
