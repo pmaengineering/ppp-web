@@ -15,12 +15,12 @@ from flask import send_file
 from flask import url_for
 from flask.views import MethodView
 
-# TODO: Refactor to run consistently wherever (browser, test suite, etc)
 try:
-    # noinspection PyUnresolvedReferences,PyPackageRequirements
-    from app import app_config, version
+    from ppp_web.ppp_web import app_config
+    from ppp_web.config import version
 except ModuleNotFoundError:
-    from webui.app import app_config, version
+    from ppp_web import app_config
+    from config import version
 
 
 class IndexView(MethodView):
@@ -68,8 +68,8 @@ class IndexView(MethodView):
         # TODO: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
         command_line = \
             self._build_ppp_ppp_tool_run_cmd(in_file_path=temp_file.name,
-                                              out_format='html',
-                                              out_file_path=html_file_path)
+                                             out_format='html',
+                                             out_file_path=html_file_path)
         _, stderr = self._run_background_process(command_line)
 
         # if ppp.ppp tool wrote something to stderr, we should show it to user
@@ -182,21 +182,15 @@ class IndexView(MethodView):
         # options = request.form.getlist('options')
         # if preset != 'custom':
         #     options = ['preset ' + preset]
-
-        python_path = 'python'  # TODO move this into the config file
-        if 'SERVER_INFO' in os.environ and os.environ['SERVER_INFO'].lower()\
-                == 'linode':
-            python_path = app_config.PYTHON_PATH
-
         command_line = " ".join((
-            python_path,
+            'python',
             '-m ppp',
             shlex.quote(in_file_path),
-            "--language " + language,
-            "--format " + out_format,
-            "--preset " + preset,
-            "--template " + "old",
-            "--outpath " + shlex.quote(out_file_path)
+            '--language ' + language,
+            '--format ' + out_format,
+            '--preset ' + preset,
+            '--template ' + 'old',
+            '--outpath ' + shlex.quote(out_file_path)
             # *('--{}'.format(option) for option in options),
         ))
 

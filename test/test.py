@@ -7,7 +7,7 @@ from copy import copy
 from glob import glob
 from subprocess import call
 
-from webui.app import create_app
+from ppp_web.ppp_web import create_app
 
 TEST_DIR = os.path.dirname(os.path.realpath(__file__)) + '/'
 TEST_STATIC_DIR = TEST_DIR + 'static/'
@@ -67,7 +67,7 @@ class TestRoutes(unittest.TestCase):
     ignore_end_patterns = ('>',)
 
     def setUp(self):
-        """Set up: Put Flask app in test mode."""
+        """Set up: Put Flask app_instance in test mode."""
         app = create_app()
         self.initial_app = copy(app)
         app.testing = True
@@ -114,4 +114,4 @@ if __name__ == '__main__':
     from test.utils.doctest_unittest_runner import doctest_unittest_runner
     TEST_DIR = os.path.dirname(os.path.realpath(__file__)) + '/'
     doctest_unittest_runner(test_dir=TEST_DIR, relative_path_to_root='../',
-                            package_names=['webui', 'test'])
+                            package_names=['ppp_web', 'test'])

@@ -95,8 +95,8 @@ Install pmix package
 #### 5. Required Configuration
 ##### Change Python executable path
 Edit config.py  
-`/opt/ppp-web $` `cd webui`  
-`/opt/ppp-web/webui $` `vim app/config.py`
+`/opt/ppp-web $` `cd ppp_web`
+`/opt/ppp-web/ppp_web $` `vim app_instance/config.py`
 
 Set Python executable variable  
 `PYTHON_PATH='/opt/ppp-web/.venv/bin/python3'`
@@ -104,16 +104,16 @@ Set Python executable variable
 
 ##### Set execution flag for dependency *wkhtmltopdf*
 
-`/opt/ppp-web/webui $` `chmod +x bin/wkhtmltopdf`
+`/opt/ppp-web/ppp_web $` `chmod +x bin/wkhtmltopdf`
 
 #### 6. Set up logging
 `mkdir logs/`  
 `touch access-logfile.log && touch error-logfile.log`
 
 #### 7. Run server process
-Run the app in background
+Run the app_instance in background
 
-`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 run:app &`
+`/opt/ppp-web/ppp_web $` `gunicorn -b 0.0.0.0:8080 run:app_instance &`
 
 Open web interface at address
 
@@ -204,8 +204,8 @@ Merge in changes using rebase
 > Common Workflows > [Activate virtual environment](#activate-virtual-environment)
 
 #### Run server process
-`cd /opt/ppp-web/webui`  
-`/opt/ppp-web/webui $` `gunicorn -b 0.0.0.0:8080 run:app &`
+`cd /opt/ppp-web/ppp_web`
+`/opt/ppp-web/ppp_web $` `gunicorn -b 0.0.0.0:8080 run:app_instance &`
 
 ### Restarting the server
 #### Find process ID  

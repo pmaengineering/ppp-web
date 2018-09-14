@@ -1,3 +1,9 @@
+# v1.3.1, UNRELEASED
+## Bugfixes
+- Fixed an issue where French date widget text was being displayed for non-French languages.
+- Fixed an issue where brackets were appearing around skip pattern expressions.
+- Fixed an issue where bullets were not appearing for choice lists.
+
 # v1.3.0, 2018-09-14
 ## New features
 - Added option for full vs minimal, with default to minimal preset.
@@ -16,7 +22,7 @@
 
 # v1.2.0, 2018-07-18
 ## General updates
-- Changed the app title from "Conversion UI" to "PPP for Open Data Kit"
+- Changed the app_instance title from "Conversion UI" to "PPP for Open Data Kit"
 - Added favicon
 - Changed default selected file format button to 'Doc'
 - Re-ordered file format buttons alphabetically

@@ -1,3 +1,5 @@
+SHELL=/bin/bash
+
 .PHONY: lint linttest lintall pylint pylinttest pylintall code codetest \
 codeall doc doctest docall test testdoc serve serve-local serve-heroku-local \
 serve-staging-linode serve-production-linode push-production-heroku \
@@ -10,11 +12,13 @@ production-connect-heroku staging-connect-heroku logs logs-staging production \
 staging production-push staging-push push-production push-staging \
 circleci-validate-config update-ppp ppp-update ppp-upgrade gunicorn-local \
 serve-local production-push-ci stagingpush-ci logs-heroku logs-staging-heroku \
-validations validate
+validations validate git-hash pip-uninstall-everything pip-reinstall \
+pip-reinstall-everything reinstall install-ppp install uninstall-everything \
+uninstall install-regular
 
 # DEVELOPMENT
 ## Linting
-SRC=./webui/
+SRC=./ppp_web/
 TEST=./test/
 ### All linting
 lint:
@@ -66,23 +70,20 @@ validations: circleci-validate-config
 validate: validations
 
 # SERVERS & ENVIRONMENTS
+GUNICORN=gunicorn ppp_web.ppp_web:app
 ## Local
 serve-local-flask:
-	python webui/run.py
+	python3 ppp_web/ppp_web.py
 serve-heroku-local:
 	heroku local
-gunicorn:
-	cd webui; \
-	gunicorn -b 0.0.0.0:5000 run:app &
 serve-dev-network-accessible:
-	gunicorn --bind 0.0.0.0:5000 run:app \
+	${GUNICORN} \
 	--access-logfile logs/access-logfile.log \
 	--error-logfile logs/error-logfile.log \
 	--capture-output \
 	--pythonpath python3
-gunicorn-local: gunicorn
-serve-local: serve
-serve-dev: serve-local-flask
+gunicorn-local: serve-dev-network-accessible
+
 
 ## Heroku
 ### Pushing & Serving
@@ -95,6 +96,7 @@ push-production-heroku:
 	git branch -D production; \
 	git checkout -b production; \
 	git push -u trunk production --force; \
+	git checkout master; \
 	open https://dashboard.heroku.com/apps/ppp-web/activity; \
 	open https://circleci.com/gh/PMA-2020/workflows/ppp-web
 push-staging-heroku:
@@ -106,12 +108,16 @@ push-staging-heroku:
 	git branch -D staging; \
 	git checkout -b staging; \
 	git push -u trunk staging --force; \
+	git checkout develop; \
 	open https://dashboard.heroku.com/apps/ppp-web-staging/activity; \
 	open https://circleci.com/gh/PMA-2020/workflows/ppp-web
-serve-production: push-production-heroku
-serve-staging: push-staging-heroku
+production-push-heroku: push-production-heroku
+staging-push-heroku: push-staging-heroku
 production: push-production-heroku
 staging: push-staging-heroku
+serve-production:
+	${GUNICORN}
+serve-staging: serve-production
 ### SSH
 production-connect-heroku:
 	heroku run bash --app ppp-web
@@ -128,7 +134,7 @@ logs-staging-heroku:
 #   (1) Use () syntax for subprocess,
 #   (2) leave off & to run in current terminal window.
 ### Pushing & Serving
-SERVE=cd webui/; gunicorn --bind 0.0.0.0:5000 run:app \
+SERVE=${GUNICORN} \
 	--access-logfile ../logs/access-logfile.log \
 	--error-logfile ../logs/error-logfile.log \
 	--capture-output \
@@ -161,6 +167,9 @@ production-push: production-push-ci
 staging-push: staging-push-ci
 push-production: production-push
 push-staging: staging-push
+gunicorn: serve-production
+serve-local: serve
+serve-dev: serve-local-flask
 ### SSH
 production-connect: production-connect-heroku
 staging-connect: staging-connect-heroku
@@ -168,14 +177,35 @@ staging-connect: staging-connect-heroku
 logs: logs-heroku
 logs-staging: logs-staging-heroku
 ### Dependency Management
+git-hash:
+	git rev-parse --verify HEAD
+install-ppp:
+	python3 -m pip install \
+	  --no-cache-dir \
+	  --upgrade odk-ppp
+install-regular:
+	pip install -r requirements.txt; \
+	pip freeze > requirements-lock.txt
 upgrade-ppp:
-	python3 -m pip uninstall odk-ppp; python3 -m pip install \
-	--no-cache-dir --upgrade odk-ppp; \
+	python3 -m pip uninstall odk-ppp; \
+	make install-ppp; \
 	pip freeze > requirements-lock.txt; \
 	echo ""; \
 	echo "Warning: Sometimes the cache is slow to update. You may need to run \
 	this command twice or more to truly update to the most recent version of \
 	ppp, if it was very recently uploaded to PyPi."
+install:
+	make install-ppp; \
+	make install-regular
+uninstall:
+	bash -c "pip uninstall -y -r <(pip freeze)"
+reinstall:
+	make uninstall; \
+	make install
 update-ppp: upgrade-ppp
 ppp-update: upgrade-ppp
 ppp-upgrade: upgrade-ppp
+uninstall-everything: uninstall
+pip-uninstall-everything: uninstall
+pip-reinstall: reinstall
+pip-reinstall-everything: reinstall

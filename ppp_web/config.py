@@ -1,20 +1,17 @@
 """module contains flask application settings"""
 import os
 
+version = '1.3.0'
+
+PROJECT_ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+APP_DIR = os.path.join(PROJECT_ROOT_DIR, 'ppp_web')
+BIN_DIR = os.path.join(APP_DIR, 'bin')
 
 class Config:
     """Base configuration."""
-    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__),
-                                            '../..'))
-    app_dir = os.path.join(base_dir, 'webui')
-    bin_dir = os.path.join(app_dir, 'bin')
-
-    WKHTMLTOPDF_PATH_LOCAL = os.path.join(bin_dir, 'wkhtmltopdf')
+    WKHTMLTOPDF_PATH_LOCAL = os.path.join(BIN_DIR, 'wkhtmltopdf')
     WKHTMLTOPDF_PATH_SYSTEM = \
         os.getenv('WKHTMLTOPDF_PATH_SYSTEM', 'wkhtmltopdf')
-    PYTHON_PATH = {
-        'linode': '/home/pydevd/projects/conv-webui/.venv/bin/python3'
-    }['linode']
 
     THREADS_PER_PAGE = 2
     CSRF_ENABLED = True
@@ -46,5 +43,5 @@ config = {
     'development': DevelopmentConfig,
     'production': ProductionConfig,
     'staging': StagingConfig,
-    'default': DevelopmentConfig  # TODO: Change?
+    'default': DevelopmentConfig
 }
