@@ -1,0 +1,8 @@
+Flask
+gunicorn
+odk-ppp
+pycodestyle
+pydocstyle
+pylint
+xlrd
+XlsxWriter

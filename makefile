@@ -84,7 +84,6 @@ serve-dev-network-accessible:
 	--pythonpath python3
 gunicorn-local: serve-dev-network-accessible
 
-
 ## Heroku
 ### Pushing & Serving
 push-production-heroku:
@@ -184,12 +183,12 @@ install-ppp:
 	  --no-cache-dir \
 	  --upgrade odk-ppp
 install-regular:
-	pip install -r requirements.txt; \
-	pip freeze > requirements-lock.txt
+	pip install -r requirements-unversioned.txt; \
+	pip freeze > requirements.txt
 upgrade-ppp:
 	python3 -m pip uninstall odk-ppp; \
 	make install-ppp; \
-	pip freeze > requirements-lock.txt; \
+	pip freeze > requirements.txt; \
 	echo ""; \
 	echo "Warning: Sometimes the cache is slow to update. You may need to run \
 	this command twice or more to truly update to the most recent version of \

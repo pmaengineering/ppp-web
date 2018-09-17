@@ -19,6 +19,7 @@ try:
     from ppp_web.ppp_web import app_config
     from ppp_web.config import version
 except ModuleNotFoundError:
+    # noinspection PyUnresolvedReferences
     from ppp_web import app_config
     from config import version
 
@@ -66,9 +67,10 @@ class IndexView(MethodView):
         temp_html_file.name = html_file_path
 
         # TODO: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
+        out_format = 'html' if output_format == 'pdf' else output_format
         command_line = \
             self._build_ppp_ppp_tool_run_cmd(in_file_path=temp_file.name,
-                                             out_format='html',
+                                             out_format=out_format,
                                              out_file_path=html_file_path)
         _, stderr = self._run_background_process(command_line)
 
@@ -145,7 +147,8 @@ class IndexView(MethodView):
             path to renamed file and mime type for word files.
         """
         doc_file_path = _input.replace('.xlsx', '')\
-            .replace('.xls', '').replace('.html', '.doc')
+            .replace('.xls', '')\
+            # .replace('.html', '.doc')
         os.rename(_input, doc_file_path)
         _, doc_file_name = os.path.split(doc_file_path)
         mime_type = 'application/vnd.openxmlformats-officedocument.' \
