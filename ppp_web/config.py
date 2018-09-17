@@ -1,7 +1,7 @@
 """module contains flask application settings"""
 import os
 
-version = '1.3.0'
+version = '1.3.1'
 
 PROJECT_ROOT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 APP_DIR = os.path.join(PROJECT_ROOT_DIR, 'ppp_web')

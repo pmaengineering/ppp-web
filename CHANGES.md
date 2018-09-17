@@ -1,4 +1,4 @@
-# v1.3.1, UNRELEASED
+# v1.3.1, 2018-09-14
 ## Bugfixes
 - Fixed an issue where French date widget text was being displayed for non-French languages.
 - Fixed an issue where brackets were appearing around skip pattern expressions.
