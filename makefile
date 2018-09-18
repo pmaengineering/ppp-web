@@ -13,7 +13,8 @@ staging production-push staging-push push-production push-staging \
 circleci-validate-config update-ppp ppp-update ppp-upgrade gunicorn-local \
 serve-local production-push-ci stagingpush-ci logs-heroku logs-staging-heroku \
 validations validate git-hash git-hash install upgrade-once upgrade uninstall \
-reinstall
+reinstall install-internal-dependencies install-latest-internal-dependencies \
+install-latest install-stable upgrade-latest upgrade-stable
 
 # DEVELOPMENT
 ## Linting
@@ -179,20 +180,37 @@ logs-staging: logs-staging-heroku
 # need to --upgrade using --no-cache-dir.
 git-hash:
 	git rev-parse --verify HEAD
+# python -m pip install git+https://github.com/USER/REPO@BRANCH --upgrade
+install-internal-dependencies:
+	pip install git+https://github.com/PMA-2020/pmix@master --upgrade; \
+	pip install git+https://github.com/PMA-2020/ppp@master --upgrade
+install-latest-internal-dependencies:
+	pip install git+https://github.com/PMA-2020/pmix@develop --upgrade; \
+	pip install git+https://github.com/PMA-2020/ppp@develop --upgrade
 install:
+	make install-latest-internal-dependencies; \
 	pip install -r requirements-unlocked.txt --no-cache-dir; \
-	pip freeze > requirements.txt; \
-	make upgrade-once
-upgrade-once:
-	pip install -r requirements-unlocked.txt --no-cache-dir --upgrade; \
 	pip freeze > requirements.txt
+#	make upgrade-once
+#upgrade-once:
+#	pip install -r requirements-unlocked.txt --no-cache-dir --upgrade; \
+#	pip freeze > requirements.txt
 upgrade:
-	make upgrade-once; \
-	make upgrade-once
+	make install-latest-internal-dependencies; \
+	pip freeze > requirements.txt
+#	make upgrade-once; \
+#	make upgrade-once
 uninstall:
 	workon ppp-web; \
 	bash -c "pip uninstall -y -r <(pip freeze)"
 reinstall:
 	make uninstall; \
 	make install; \
-	make upgrade
+#	make upgrade
+install-latest: install
+install-stable:
+	make install-internal-dependencies; \
+	pip install -r requirements-unlocked.txt --no-cache-dir; \
+	pip freeze > requirements.txt
+upgrade-latest: install-latest-internal-dependencies
+upgrade-stable: install-internal-dependencies

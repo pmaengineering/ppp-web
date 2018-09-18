@@ -181,7 +181,7 @@ class IndexView(MethodView):
             string: Command.
         """
         language = request.form.get('language', 'English')
-        preset = request.form.get('preset', 'minimal')
+        preset = request.form.get('preset', 'standard')
         # options = request.form.getlist('options')
         # if preset != 'custom':
         #     options = ['preset ' + preset]
