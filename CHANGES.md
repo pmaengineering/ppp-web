@@ -1,3 +1,7 @@
+# v1.3.2, 2018-09-18
+## Bugfixes
+- Changed certain error cases to successfully convert and present warnings instead.
+
 # v1.3.1, 2018-09-14
 ## Bugfixes
 - Fixed an issue where French date widget text was being displayed for non-French languages.
@@ -6,7 +10,7 @@
 
 # v1.3.0, 2018-09-14
 ## New features
-- Added option for full vs minimal, with default to minimal preset.
+- Added option for full vs standard, with default to standard preset.
 ## General updates
 - Template tweaks
 ## Developer updates

@@ -4,8 +4,8 @@
 ## About
 PPP is a project with the purpose of helping people convert XlsForm Excel files into more human-readable, printable formats, commonly called "paper questionnaires". Officially, PPP stands for "Pretty PDF Printer", but other formats are supported. The project consists of...
 
-- A [web application](https://github.com/pma-2020/ppp)
-- A [command line tool](https://github.com/pma-2020/ppp-web)
+- A [web application](https://github.com/pma-2020/ppp-web)
+- A [command line tool](https://github.com/pma-2020/ppp)
 
 Both tools are open source and free to install. You can also use it online with no installation necessary, at http://ppp.pma2020.org.
 

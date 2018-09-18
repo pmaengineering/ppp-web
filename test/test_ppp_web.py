@@ -105,9 +105,24 @@ class TestCommand(PppWebTest):
             ['python3', '-m', 'ppp'] + self.input_files() + [
              '--language', 'English',
              '--format', 'doc',
-             '--preset', 'minimal',
+             '--preset', 'standard',
              '--template', 'old',
              '--outpath', self.output_path()])
+
+
+class Warnings(PppWebTest):
+    """Test warnings."""
+
+    def test_Warnings(self):
+        """Test that warnings print out and don't throw errors"""
+        self.standard_conversion_test(
+            ['python3', '-m', 'ppp'] + self.input_files() + [
+             '--language', 'English',
+             '--format', 'doc',
+             '--preset', 'standard',
+             '--template', 'old',
+             '--outpath', self.output_path()])
+        # TODO: Then?
 
 
 if __name__ == '__main__':
