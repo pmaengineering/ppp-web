@@ -1,6 +1,7 @@
 Flask
 gunicorn
 odk-ppp
+pmix
 pycodestyle
 pydocstyle
 pylint

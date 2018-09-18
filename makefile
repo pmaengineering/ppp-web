@@ -12,9 +12,8 @@ production-connect-heroku staging-connect-heroku logs logs-staging production \
 staging production-push staging-push push-production push-staging \
 circleci-validate-config update-ppp ppp-update ppp-upgrade gunicorn-local \
 serve-local production-push-ci stagingpush-ci logs-heroku logs-staging-heroku \
-validations validate git-hash pip-uninstall-everything pip-reinstall \
-pip-reinstall-everything reinstall install-ppp install uninstall-everything \
-uninstall install-regular
+validations validate git-hash git-hash install upgrade-once upgrade uninstall \
+reinstall
 
 # DEVELOPMENT
 ## Linting
@@ -176,41 +175,24 @@ staging-connect: staging-connect-heroku
 logs: logs-heroku
 logs-staging: logs-staging-heroku
 ### Dependency Management
+# For some reason, if something has been uploaded to pip very recently, you
+# need to --upgrade using --no-cache-dir.
 git-hash:
 	git rev-parse --verify HEAD
-install-ppp:
-	python3 -m pip install \
-	  --no-cache-dir \
-	  --upgrade odk-ppp
-install-regular:
-	pip install -r requirements-unlocked.txt; \
+install:
+	pip install -r requirements-unlocked.txt --no-cache-dir; \
+	pip freeze > requirements.txt; \
+	make upgrade-once
+upgrade-once:
+	pip install -r requirements-unlocked.txt --no-cache-dir --upgrade; \
 	pip freeze > requirements.txt
 upgrade:
-	pip install -r requirements-unlocked.txt --upgrade; \
-	pip freeze > requirements.txt
-upgrade-ppp:
-	python3 -m pip uninstall odk-ppp; \
-	make install-ppp; \
-	python3 -m pip uninstall odk-ppp; \
-	make install-ppp;
-	pip freeze > requirements.txt; \
-	echo ""; \
-	echo "Warning: Sometimes the cache is slow to update. You may need to run \
-	this command twice or more to truly update to the most recent version of \
-	ppp, if it was very recently uploaded to PyPi."
-install:
-	make install-ppp; \
-	make install-regular
+	make upgrade-once; \
+	make upgrade-once
 uninstall:
 	workon ppp-web; \
 	bash -c "pip uninstall -y -r <(pip freeze)"
 reinstall:
 	make uninstall; \
-	make install
-update-ppp: upgrade-ppp
-ppp-update: upgrade-ppp
-ppp-upgrade: upgrade-ppp
-uninstall-everything: uninstall
-pip-uninstall-everything: uninstall
-pip-reinstall: reinstall
-pip-reinstall-everything: reinstall
+	make install; \
+	make upgrade
