@@ -183,11 +183,16 @@ install-ppp:
 	  --no-cache-dir \
 	  --upgrade odk-ppp
 install-regular:
-	pip install -r requirements-unversioned.txt; \
+	pip install -r requirements-unlocked.txt; \
+	pip freeze > requirements.txt
+upgrade:
+	pip install -r requirements-unlocked.txt --upgrade; \
 	pip freeze > requirements.txt
 upgrade-ppp:
 	python3 -m pip uninstall odk-ppp; \
 	make install-ppp; \
+	python3 -m pip uninstall odk-ppp; \
+	make install-ppp;
 	pip freeze > requirements.txt; \
 	echo ""; \
 	echo "Warning: Sometimes the cache is slow to update. You may need to run \
@@ -197,6 +202,7 @@ install:
 	make install-ppp; \
 	make install-regular
 uninstall:
+	workon ppp-web; \
 	bash -c "pip uninstall -y -r <(pip freeze)"
 reinstall:
 	make uninstall; \
