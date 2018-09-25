@@ -23,11 +23,15 @@ TEST=./test/
 ### All linting
 lint:
 	${LINT_SRC}; ${CODE_SRC}; ${DOC_SRC}
+	# If you want to run this command directly, use the following:
+	# python -m pylint --output-format=colorized --reports=n ppp_web test; \
+	# python -m pycodestyle ppp_web test; \
+	# python -m pydocstyle ppp_web test
 linttest:
 	${LINT_TEST}; ${CODE_TEST}; ${DOC_TEST}
 lintall: lint linttest
 ### Pylint only
-PYLINT=python3 -m pylint \
+PYLINT=python -m pylint \
 	--output-format=colorized \
 	--reports=n
 LINT_SRC=${PYLINT} ${SRC}
@@ -38,7 +42,7 @@ pylinttest:
 	${LINT_TEST}
 pylintall: pylint pylinttest
 ### Pycodestyle only
-PYCODESTYLE=python3 -m pycodestyle
+PYCODESTYLE=python -m pycodestyle
 CODE_SRC=${PYCODESTYLE} ${SRC}
 CODE_TEST=${PYCODESTYLE} ${TEST}
 code:
@@ -47,7 +51,7 @@ codetest:
 	${CODE_TEST}
 codeall: code codetest
 ### Pydocstyle only
-PYDOCSTYLE=python3 -m pydocstyle
+PYDOCSTYLE=python -m pydocstyle
 DOC_SRC=${PYDOCSTYLE} ${SRC}
 DOC_TEST=${PYDOCSTYLE} ${TEST}
 doc:
@@ -58,9 +62,9 @@ docall: doc doctest
 
 ## Testing
 test:
-	python3 -m unittest discover -v
+	python -m unittest discover -v
 testdoc:
-	python3 -m test.test --doctests-only
+	python -m test.test --doctests-only
 
 ## Validations
 circleci-validate-config:
@@ -73,7 +77,7 @@ validate: validations
 GUNICORN=gunicorn ppp_web.ppp_web:app
 ## Local
 serve-local-flask:
-	python3 ppp_web/ppp_web.py
+	python ppp_web/ppp_web.py
 serve-heroku-local:
 	heroku local
 serve-dev-network-accessible:
@@ -81,7 +85,7 @@ serve-dev-network-accessible:
 	--access-logfile logs/access-logfile.log \
 	--error-logfile logs/error-logfile.log \
 	--capture-output \
-	--pythonpath python3
+	--pythonpath python
 gunicorn-local: serve-dev-network-accessible
 
 ## Heroku
