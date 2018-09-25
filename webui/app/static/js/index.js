@@ -1,5 +1,40 @@
 /*This file contains front-end application logic*/
 
+var default_language = '';
+// file select onchange event handler
+function handleFileSelect(evt) {
+  var file = evt.target.files[0];
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var data = e.target.result;
+    var workbook = XLSX.read(data, {
+      type: 'binary'
+    });
+    workbook.SheetNames.forEach(function(sheetName) {
+      var XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      if (sheetName == 'choices') {
+        $('#lang-picker').find('option').remove();
+        const keys = Object.keys(XL_row_object[0]);
+        keys.forEach(key => {
+          if (key.startsWith('label::')) {
+            const l = key.substr(7);
+            $('#lang-picker').append(new Option(l, l.toLowerCase()));
+            $('#lang-wrapper').show();
+          }
+        });
+      }
+      if (sheetName == 'settings') {
+        default_language = XL_row_object[0].default_language;
+      }
+    });
+    $('#lang-picker').val(default_language.toLowerCase());
+  };
+  reader.onerror = function(ex) {
+    console.log('Exception: ', ex);
+  };
+  reader.readAsBinaryString(file);
+}
+
 // function unchecks all checkboxes on the page
 function clearOptions() {
     $("input[type='checkbox']").attr("checked", false);
@@ -106,4 +141,7 @@ $(document).ready(function () {
             autoHide: false
         })
     }
+    
+    // file input control change event handler
+    document.getElementById('inFile').addEventListener('change', handleFileSelect, false);
 });
