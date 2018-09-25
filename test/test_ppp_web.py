@@ -115,6 +115,7 @@ class Warnings(PppWebTest):
 
     def test_Warnings(self):
         """Test that warnings print out and don't throw errors"""
+        # TODO: Capture stderr; don't show in log
         self.standard_conversion_test(
             ['python3', '-m', 'ppp'] + self.input_files() + [
              '--language', 'English',
@@ -122,7 +123,7 @@ class Warnings(PppWebTest):
              '--preset', 'standard',
              '--template', 'old',
              '--outpath', self.output_path()])
-        # TODO: Then?
+        # TODO: Assert that 'stderr' contains 'Warning!'
 
 
 if __name__ == '__main__':

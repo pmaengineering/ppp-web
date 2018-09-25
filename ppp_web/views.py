@@ -180,16 +180,17 @@ class IndexView(MethodView):
         Returns:
             string: Command.
         """
-        language = request.form.get('language', 'English')
+        language = request.form.get('language')
+        lang_option = \
+            '--language ' + language if language and language != 'none' else ''
         preset = request.form.get('preset', 'standard')
+        # Note: To be added in the future.
         # options = request.form.getlist('options')
-        # if preset != 'custom':
-        #     options = ['preset ' + preset]
-        command_line = " ".join((
+        command_line = ' '.join((
             'python',
             '-m ppp',
             shlex.quote(in_file_path),
-            '--language ' + language,
+            lang_option,
             '--format ' + out_format,
             '--preset ' + preset,
             '--template ' + 'old',

@@ -1,5 +1,40 @@
 /*This file contains front-end application logic*/
 
+let default_language = '';
+// file select onchange event handler
+function handleFileSelect(evt) {
+  let file = evt.target.files[0];
+  let reader = new FileReader();
+  reader.onload = function(e) {
+    let data = e.target.result;
+    let workbook = XLSX.read(data, {
+      type: 'binary'
+    });
+    workbook.SheetNames.forEach(function(sheetName) {
+      let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+      if (sheetName === 'choices') {
+        $('#lang-picker').find('option').remove();
+        const keys = Object.keys(XL_row_object[0]);
+        keys.forEach(key => {
+          if (key.startsWith('label::')) {
+            const l = key.substr(7);
+            $('#lang-picker').append(new Option(l, l));
+            $('#lang-wrapper').show();
+          }
+        });
+      }
+      if (sheetName === 'settings') {
+        default_language = XL_row_object[0].default_language;
+      }
+    });
+    $('#lang-picker').val(default_language);
+  };
+  reader.onerror = function(ex) {
+    console.log('Exception: ', ex);
+  };
+  reader.readAsBinaryString(file);
+}
+
 // function unchecks all checkboxes on the page
 function clearOptions() {
     $("input[type='checkbox']").attr("checked", false);
@@ -7,7 +42,7 @@ function clearOptions() {
 
 // function checks input (radio button or checkbox) by value
 function setOption(value) {
-    var selector = "input[value='" + value + "']";
+    let selector = "input[value='" + value + "']";
     $(selector).prop('checked', true);
 }
 
@@ -53,33 +88,41 @@ $(document).ready(function () {
     });
 
     /* preset button click event handler */
-    $("#presets").find("label").click(function (event) {
-        // get input element in clicked label
-        var $e = $(event.target).find("input");
-        // do nothing if custom button is clicked
-        if ($e.val() === 'custom') {
-            return;
-        }
-        // clear existing options
-        clearOptions();
-
-        // enable options according to clicked preset
-        switch ($e.val()) {
-            case 'developer':
-                break;
-            case 'internal':
-                setOption("hr-relevant");
-                setOption("text-replacements");
-                break;
-            case 'public':
-                setOption("input-replacement");
-                setOption("exclusion");
-                setOption("hr-relevant");
-                setOption("hr-constraint");
-                setOption("text-replacements");
-                break
-        }
-    });
+    // TODO: We will maybe add this later. I may delete this too. -jef 2018/09/25
+    // $("#presets").find("label").click(function (event) {
+    //     // get input element in clicked label
+    //     let $e = $(event.target).find("input");
+    //     // do nothing if custom button is clicked
+    //     if ($e.val() === 'custom') {
+    //         return;
+    //     }
+    //     // clear existing options
+    //     clearOptions();
+    //
+    //     // enable options according to clicked preset
+    //     switch ($e.val()) {
+    //         case 'standard':
+    //             break;
+    //         case 'internal':
+    //             setOption("hr-relevant");
+    //             setOption("text-replacements");
+    //             break;
+    //         case 'public':
+    //             setOption("input-replacement");
+    //             setOption("exclusion");
+    //             setOption("hr-relevant");
+    //             setOption("hr-constraint");
+    //             setOption("text-replacements");
+    //             break;
+    //         case 'detailed':
+    //             setOption("input-replacement");
+    //             setOption("exclusion");
+    //             setOption("hr-relevant");
+    //             setOption("hr-constraint");
+    //             setOption("text-replacements");
+    //             break
+    //     }
+    // });
 
     /* options checkbox click event handler */
     $("input[type='checkbox']").click(function (event) {
@@ -90,10 +133,10 @@ $(document).ready(function () {
 
     // when all the handlers configured, check if hidden container
     // contains a server message, and if contains, show it to user
-    var $message = $("#message");
-    var text = $message.text().trim();
+    let $message = $("#message");
+    let text = $message.text().trim();
 
-    var notify_classes;
+    let notify_classes;
     if ($message.data("category") == null) notify_classes = ['error', 'wrap-spaces'];
     else notify_classes = [$message.data("category"), 'wrap-spaces'];
 
@@ -106,4 +149,7 @@ $(document).ready(function () {
             autoHide: false
         })
     }
+    
+    // file input control change event handler
+    document.getElementById('inFile').addEventListener('change', handleFileSelect, false);
 });
