@@ -6,7 +6,6 @@ import ntpath
 from copy import copy
 from platform import platform
 from tempfile import NamedTemporaryFile
-from subprocess import call
 
 from flask import flash
 from flask import redirect
@@ -16,18 +15,17 @@ from flask import send_file
 from flask import url_for
 from flask.views import MethodView
 
-# TODO: Refactor to run consistently wherever (browser, test suite, etc)
 try:
-    # noinspection PyUnresolvedReferences,PyPackageRequirements
-    from app import app_config, version
+    from ppp_web.ppp_web import app_config
+    from ppp_web.config import version
 except ModuleNotFoundError:
-    from webui.app import app_config, version
+    # noinspection PyUnresolvedReferences
+    from ppp_web import app_config
+    from config import version
 
 
 class IndexView(MethodView):
-    """
-    Index view class with two handlers for GET and POST requests
-    """
+    """Index view class with two handlers for GET and POST requests."""
     @staticmethod
     def get():
         """Get method."""
@@ -69,13 +67,14 @@ class IndexView(MethodView):
         temp_html_file.name = html_file_path
 
         # TODO: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
+        out_format = 'html' if output_format == 'pdf' else output_format
         command_line = \
-            self._build_pmix_ppp_tool_run_cmd(in_file_path=temp_file.name,
-                                              out_format='html',
-                                              out_file_path=html_file_path)
+            self._build_ppp_ppp_tool_run_cmd(in_file_path=temp_file.name,
+                                             out_format=out_format,
+                                             out_file_path=html_file_path)
         _, stderr = self._run_background_process(command_line)
 
-        # if pmix.ppp tool wrote something to stderr, we should show it to user
+        # if ppp.ppp tool wrote something to stderr, we should show it to user
         if stderr:
             flash("STDERR:\n{}".format(stderr), "error")
             return redirect(url_for('index'))
@@ -148,7 +147,8 @@ class IndexView(MethodView):
             path to renamed file and mime type for word files.
         """
         doc_file_path = _input.replace('.xlsx', '')\
-            .replace('.xls', '').replace('.html', '.doc')
+            .replace('.xls', '')\
+            # .replace('.html', '.doc')
         os.rename(_input, doc_file_path)
         _, doc_file_name = os.path.split(doc_file_path)
         mime_type = 'application/vnd.openxmlformats-officedocument.' \
@@ -165,8 +165,7 @@ class IndexView(MethodView):
         """
 
         args = shlex.split(command_line)
-        process = subprocess.Popen(args,
-                                   stdout=subprocess.PIPE,
+        process = subprocess.Popen(args, stdout=subprocess.PIPE,
                                    stderr=subprocess.PIPE)
         process.wait()
         stdout = process.stdout.read().decode().strip()
@@ -175,33 +174,28 @@ class IndexView(MethodView):
         return stdout, stderr
 
     @staticmethod
-    def _build_pmix_ppp_tool_run_cmd(in_file_path, out_format,
-                                     out_file_path):
-        """This method build command line command to run pmix.ppp tool.
+    def _build_ppp_ppp_tool_run_cmd(in_file_path, out_format, out_file_path):
+        """This method build command line command to run ppp tool.
 
         Returns:
             string: Command.
         """
         language = request.form.get('language')
-        preset = request.form.get('preset', 'developer')
-        options = request.form.getlist('options')
-        if preset != 'custom':
-            options = ['preset ' + preset]
-
-        python_path = os.getenv('PYTHON_PATH', 'python3')
-        try:
-          subprocess.call([python_path, "--version"], stdout=open(os.devnull, "w"), stderr=subprocess.STDOUT)
-        except:
-          python_path = 'python'
-
-        command_line = " ".join((
-            python_path,
+        lang_option = \
+            '--language ' + language if language and language != 'none' else ''
+        preset = request.form.get('preset', 'standard')
+        # Note: To be added in the future.
+        # options = request.form.getlist('options')
+        command_line = ' '.join((
+            'python',
             '-m ppp',
             shlex.quote(in_file_path),
-            "-l " + language,
-            "-f " + out_format,
-            *('--{}'.format(option) for option in options),
-            "-o " + shlex.quote(out_file_path)
+            lang_option,
+            '--format ' + out_format,
+            '--preset ' + preset,
+            '--template ' + 'old',
+            '--outpath ' + shlex.quote(out_file_path)
+            # *('--{}'.format(option) for option in options),
         ))
 
         return command_line

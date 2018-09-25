@@ -26,7 +26,7 @@ def get_test_modules(pkg_name, test_dir, relative_path_to_root):
     Args:
         pkg_name (str): Package name.
         test_dir (str): Path to test directory.
-        relative_path_to_root (str): Relative path to root directory of app
+        relative_path_to_root (str): Relative path to root directory of app_instance
             from test directory.
 
     Returns:
@@ -58,7 +58,7 @@ def get_test_suite(test_dir, relative_path_to_root, package_names):
 
     Args:
         test_dir (str): Path to test directory.
-        relative_path_to_root (str): Relative path to root directory of app
+        relative_path_to_root (str): Relative path to root directory of app_instance
             from test directory.
         package_names (list): List of strings of package names to test.
 
@@ -79,7 +79,7 @@ def doctest_unittest_runner(test_dir, relative_path_to_root, package_names):
 
     Args:
         test_dir (str): Path to test directory.
-        relative_path_to_root (str): Relative path to root directory of app
+        relative_path_to_root (str): Relative path to root directory of app_instance
             from test directory.
         package_names (list): List of strings of package names to test.
     """

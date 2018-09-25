@@ -44,6 +44,81 @@
           </select>
         </div>
       </div>
+
+
+      <div class="col-md-4 col-md-offset-4">
+        <p>Preset:</p>
+        <div class="form-group btn-group w100prc" id="presets" data-toggle="buttons">
+          <label class="btn btn-default col-md-4 active" id="btnStandardPreset">
+            <input type="radio" value="standard" name="preset" checked />
+            Standard
+          </label>
+          <label class="btn btn-default col-md-4" id="btnDetailedPreset">
+            <input type="radio" value="detailed" name="preset"/>
+            Added Detail
+          </label>
+          <!--  Note: These will be added later.
+          <label class="btn btn-default col-md-3">
+            <input type="radio" value="internal" name="preset"/>
+            Internal
+          </label>
+          <label class="btn btn-default col-md-3">
+            <input type="radio" value="public" name="preset"/>
+            Public
+          </label>
+          <label class="btn btn-default col-md-3" id="btnCustomPreset">
+            <input type="radio" value="custom" name="preset"/>
+            Custom
+          </label>
+          -->
+        </div>
+      </div>
+
+      <!-- Note: These will be added later.
+      <div class="col-md-4 col-md-offset-4">
+        <p>Additional options:</p>
+        <div class="form-group w100prc">
+          <div class="checkbox">
+            <label>
+              <input name="options" type="checkbox" value="input-replacement"/>
+              Input replacement
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input name="options" type="checkbox" value="exclusion"/>
+              Exclusion
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input name="options" type="checkbox" value="hr-relevant"/>
+              Human-readable relevant text
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input name="options" type="checkbox" value="hr-constraint"/>
+              Human-readable constraint text
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input name="options" type="checkbox" value="no-constraint"/>
+              No constraint text
+            </label>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input name="options" type="checkbox" value="text-replacements"/>
+              General text replacements
+            </label>
+          </div>
+        </div>
+      </div>
+      -->
+
+
       <div class="col-md-4 col-md-offset-4">
         <div class="form-group w100prc">
           <input type="submit" value="Submit" id="btnSubmit" class="btn btn-success col-md-12"/>
