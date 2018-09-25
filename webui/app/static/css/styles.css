@@ -35,7 +35,7 @@ div.form-group.w100prc {
   position: relative;
 }
 
-div.form-group.w100prc div.notifyjs-wrapper.notifyjs-hidable {
+div.form-group.w100prc div.notifyjs-wrapper {
   width: 100%;
 }
 

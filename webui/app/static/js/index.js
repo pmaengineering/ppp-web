@@ -56,11 +56,19 @@ $(document).ready(function () {
             // stop submitting form
             event.preventDefault();
             // show notification and exit handler
-            return $(".file-input").notify("Please, select file for uploading", {
+            return $.notify({
+                message: 'Please, select file for uploading',
+            }, {
+                element: '.file-input',
+                type: 'danger',
+            });
+            
+            /* $(".file-input").notify("Please, select file for uploading", {
+                clickToHide: false,
                 position: ($(window).width() < 992) ? "bottom right" : "right",
                 className: "error",
                 autoHideDelay: 2000
-            })
+            }) */
         }
         // disable submit button after 100 ms. to give form a chance to send
         // data to server
@@ -134,12 +142,13 @@ $(document).ready(function () {
 
     if (text !== '') {
         $("#btnSubmit").notify(text, {
-            clickToHide: true,
+            clickToHide: false,
             arrowShow: false,
             position: "bottom left",
             className: notify_classes,
-            autoHide: false
-        })
+            autoHide: false,
+            button: 'X'
+        });
     }
     
     // file input control change event handler
