@@ -35,10 +35,18 @@ div.form-group.w100prc {
   position: relative;
 }
 
-div.form-group.w100prc div.notifyjs-wrapper.notifyjs-hidable {
+div.form-group.w100prc div.notifyjs-wrapper {
   width: 100%;
 }
 
 div.form-group.w100prc div.notifyjs-container {
   margin-bottom: 1rem;
+}
+
+.file-input .close {
+  display: block;
+}
+
+.submit-wrapper .alert {
+  width: 100%;
 }

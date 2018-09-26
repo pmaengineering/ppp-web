@@ -3,6 +3,7 @@
 let default_language = '';
 // file select onchange event handler
 function handleFileSelect(evt) {
+  $.notifyClose();
   let file = evt.target.files[0];
   let reader = new FileReader();
   reader.onload = function(e) {
@@ -11,21 +12,30 @@ function handleFileSelect(evt) {
       type: 'binary'
     });
     workbook.SheetNames.forEach(function(sheetName) {
-      let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-      if (sheetName === 'choices') {
-        $('#lang-picker').find('option').remove();
-        const keys = Object.keys(XL_row_object[0]);
-        keys.forEach(key => {
-          if (key.startsWith('label::')) {
-            const l = key.substr(7);
-            $('#lang-picker').append(new Option(l, l));
-            $('#lang-wrapper').show();
-          }
-        });
-      }
-      if (sheetName === 'settings') {
-        default_language = XL_row_object[0].default_language;
-      }
+        let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        if (sheetName === 'choices') {
+            $('#lang-picker').find('option').remove();
+            const keys = Object.keys(XL_row_object[0]);
+            keys.forEach(key => {
+                if (key.startsWith('label::')) {
+                    const l = key.substr(7);
+                    $('#lang-picker').append(new Option(l, l));
+                }
+            });
+            
+            if ($('#lang-picker option').length > 0) {
+                $('#lang-picker').prop('disabled', false);
+            } else {
+                $('#lang-picker').append(new Option('No language specified in form.', 'none', true, true));
+                setTimeout(() => {
+                    $('#lang-picker').val('none');
+                }, 1000);
+                $('#lang-picker').prop('disabled', true);
+            }
+        }
+        if (sheetName === 'settings') {
+            default_language = XL_row_object[0].default_language;
+        }
     });
     $('#lang-picker').val(default_language);
   };
@@ -56,11 +66,11 @@ $(document).ready(function () {
             // stop submitting form
             event.preventDefault();
             // show notification and exit handler
-            return $(".file-input").notify("Please, select file for uploading", {
-                position: ($(window).width() < 992) ? "bottom right" : "right",
-                className: "error",
-                autoHideDelay: 2000
-            })
+            return $.notify({
+                message: 'Please, select file for uploading',
+            }, {
+                type: 'danger',
+            });
         }
         // disable submit button after 100 ms. to give form a chance to send
         // data to server
@@ -136,18 +146,34 @@ $(document).ready(function () {
     let $message = $("#message");
     let text = $message.text().trim();
 
-    let notify_classes;
-    if ($message.data("category") == null) notify_classes = ['error', 'wrap-spaces'];
-    else notify_classes = [$message.data("category"), 'wrap-spaces'];
+    let notify_type;
+    if ($message.data("category") == null) {
+        notify_type = 'danger';
+    } else {
+        const arr_cat_type = {
+            'error': 'danger',
+            'warning': 'warning',
+            'info': 'info'
+        }
+        notify_type = arr_cat_type[$message.data("category")];
+    }
 
     if (text !== '') {
-        $("#btnSubmit").notify(text, {
-            clickToHide: true,
-            arrowShow: false,
-            position: "bottom left",
-            className: notify_classes,
-            autoHide: false
-        })
+        $.notify({
+            message: text,
+        }, {
+            element: '.submit-wrapper',
+            type: notify_type,
+            delay: 0,
+            placement: {
+                from: 'bottom',
+                align: 'center'
+            },
+            position: 'relative',
+            offset: {
+                y: -20
+            }
+        });
     }
     
     // file input control change event handler
