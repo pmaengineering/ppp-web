@@ -3,6 +3,7 @@
 let default_language = '';
 // file select onchange event handler
 function handleFileSelect(evt) {
+  $.notifyClose();
   let file = evt.target.files[0];
   let reader = new FileReader();
   reader.onload = function(e) {
@@ -59,16 +60,8 @@ $(document).ready(function () {
             return $.notify({
                 message: 'Please, select file for uploading',
             }, {
-                element: '.file-input',
                 type: 'danger',
             });
-            
-            /* $(".file-input").notify("Please, select file for uploading", {
-                clickToHide: false,
-                position: ($(window).width() < 992) ? "bottom right" : "right",
-                className: "error",
-                autoHideDelay: 2000
-            }) */
         }
         // disable submit button after 100 ms. to give form a chance to send
         // data to server
@@ -144,18 +137,33 @@ $(document).ready(function () {
     let $message = $("#message");
     let text = $message.text().trim();
 
-    let notify_classes;
-    if ($message.data("category") == null) notify_classes = ['error', 'wrap-spaces'];
-    else notify_classes = [$message.data("category"), 'wrap-spaces'];
+    let notify_type;
+    if ($message.data("category") == null) {
+        notify_type = 'danger';
+    } else {
+        const arr_cat_type = {
+            'error': 'danger',
+            'warning': 'warning',
+            'info': 'info'
+        }
+        notify_type = arr_cat_type[$message.data("category")];
+    }
 
     if (text !== '') {
-        $("#btnSubmit").notify(text, {
-            clickToHide: false,
-            arrowShow: false,
-            position: "bottom left",
-            className: notify_classes,
-            autoHide: false,
-            button: 'X'
+        $.notify({
+            message: text,
+        }, {
+            element: '.submit-wrapper',
+            type: notify_type,
+            delay: 10000,
+            placement: {
+                from: 'bottom',
+                align: 'center'
+            },
+            position: 'relative',
+            offset: {
+                y: -20
+            }
         });
     }
     

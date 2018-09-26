@@ -42,3 +42,11 @@ div.form-group.w100prc div.notifyjs-wrapper {
 div.form-group.w100prc div.notifyjs-container {
   margin-bottom: 1rem;
 }
+
+.file-input .close {
+  display: block;
+}
+
+.submit-wrapper .alert {
+  width: 100%;
+}
