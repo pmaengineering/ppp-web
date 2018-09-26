@@ -164,7 +164,7 @@ $(document).ready(function () {
         }, {
             element: '.submit-wrapper',
             type: notify_type,
-            delay: 10000,
+            delay: 0,
             placement: {
                 from: 'bottom',
                 align: 'center'
