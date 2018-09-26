@@ -12,21 +12,30 @@ function handleFileSelect(evt) {
       type: 'binary'
     });
     workbook.SheetNames.forEach(function(sheetName) {
-      let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
-      if (sheetName === 'choices') {
-        $('#lang-picker').find('option').remove();
-        const keys = Object.keys(XL_row_object[0]);
-        keys.forEach(key => {
-          if (key.startsWith('label::')) {
-            const l = key.substr(7);
-            $('#lang-picker').append(new Option(l, l));
-            $('#lang-wrapper').show();
-          }
-        });
-      }
-      if (sheetName === 'settings') {
-        default_language = XL_row_object[0].default_language;
-      }
+        let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
+        if (sheetName === 'choices') {
+            $('#lang-picker').find('option').remove();
+            const keys = Object.keys(XL_row_object[0]);
+            keys.forEach(key => {
+                if (key.startsWith('label::')) {
+                    const l = key.substr(7);
+                    $('#lang-picker').append(new Option(l, l));
+                }
+            });
+            
+            if ($('#lang-picker option').length > 0) {
+                $('#lang-picker').prop('disabled', false);
+            } else {
+                $('#lang-picker').append(new Option('No language specified in form.', 'none', true, true));
+                setTimeout(() => {
+                    $('#lang-picker').val('none');
+                }, 1000);
+                $('#lang-picker').prop('disabled', true);
+            }
+        }
+        if (sheetName === 'settings') {
+            default_language = XL_row_object[0].default_language;
+        }
     });
     $('#lang-picker').val(default_language);
   };
