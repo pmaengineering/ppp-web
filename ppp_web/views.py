@@ -6,6 +6,7 @@ import ntpath
 from copy import copy
 from platform import platform
 from tempfile import NamedTemporaryFile
+from ppp import run, OdkException
 
 from flask import flash
 from flask import redirect
@@ -68,15 +69,20 @@ class IndexView(MethodView):
 
         # TODO: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
         out_format = 'html' if output_format == 'pdf' else output_format
-        command_line = \
+
+        ''' command_line = \
             self._build_ppp_ppp_tool_run_cmd(in_file_path=temp_file.name,
                                              out_format=out_format,
                                              out_file_path=html_file_path)
-        _, stderr = self._run_background_process(command_line)
+        _, stderr = self._run_background_process(command_line) '''
+        ppp_resp = self._run_ppp_api(in_file_path=temp_file.name,
+                                    out_format=out_format,
+                                    out_file_path=html_file_path)
 
         # if ppp.ppp tool wrote something to stderr, we should show it to user
-        if stderr:
-            flash("STDERR:\n{}".format(stderr), "error")
+        # if stderr:
+        if ppp_resp != True:
+            flash("STDERR:\n{}".format(ppp_resp), "error")
             return redirect(url_for('index'))
 
         # output path now exists and refers to converted html file at /tmp
@@ -174,6 +180,23 @@ class IndexView(MethodView):
         return stdout, stderr
 
     @staticmethod
+    def _run_ppp_api(in_file_path, out_format, out_file_path):
+        language = request.form.get('language')
+        lang_option = language if language and language != 'none' else ''
+        preset = request.form.get('preset', 'standard')
+        try:
+            run(files=[in_file_path],
+                languages=[lang_option],
+                format=out_format,
+                preset=preset,
+                template='old',
+                outpath=out_file_path)
+            return True
+            # some logic
+        except OdkException as err:
+            return err
+            
+    ''' @staticmethod
     def _build_ppp_ppp_tool_run_cmd(in_file_path, out_format, out_file_path):
         """This method build command line command to run ppp tool.
 
@@ -198,4 +221,4 @@ class IndexView(MethodView):
             # *('--{}'.format(option) for option in options),
         ))
 
-        return command_line
+        return command_line '''
