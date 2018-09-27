@@ -6,7 +6,6 @@ import ntpath
 from copy import copy
 from platform import platform
 from tempfile import NamedTemporaryFile
-from ppp import run, OdkException
 
 from flask import flash
 from flask import redirect
@@ -15,6 +14,7 @@ from flask import request
 from flask import send_file
 from flask import url_for
 from flask.views import MethodView
+from ppp import run, OdkException
 
 try:
     from ppp_web.ppp_web import app_config
@@ -76,12 +76,12 @@ class IndexView(MethodView):
                                              out_file_path=html_file_path)
         _, stderr = self._run_background_process(command_line) '''
         ppp_resp = self._run_ppp_api(in_file_path=temp_file.name,
-                                    out_format=out_format,
-                                    out_file_path=html_file_path)
+                                     out_format=out_format,
+                                     out_file_path=html_file_path)
 
         # if ppp.ppp tool wrote something to stderr, we should show it to user
         # if stderr:
-        if ppp_resp != True:
+        if not ppp_resp:
             flash("STDERR:\n{}".format(ppp_resp), "error")
             return redirect(url_for('index'))
 
@@ -191,7 +191,7 @@ class IndexView(MethodView):
                 preset=preset,
                 template='old',
                 outpath=out_file_path)
-            return True
+            return True  # ?
             # some logic
         except OdkException as err:
             return err
