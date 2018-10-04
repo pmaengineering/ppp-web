@@ -1,6 +1,5 @@
 /*This file contains front-end application logic*/
 
-let default_language = '';
 // file select onchange event handler
 function handleFileSelect(evt) {
   $.notifyClose();
@@ -11,6 +10,8 @@ function handleFileSelect(evt) {
     let workbook = XLSX.read(data, {
       type: 'binary'
     });
+    let languageList = [];
+    let defaultLanguage = '';
     workbook.SheetNames.forEach(function(sheetName) {
         let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
         if (sheetName === 'choices') {
@@ -19,6 +20,7 @@ function handleFileSelect(evt) {
             keys.forEach(key => {
                 if (key.startsWith('label::')) {
                     const l = key.substr(7);
+                    languageList.push(l);
                     $('#lang-picker').append(new Option(l, l));
                 }
             });
@@ -34,15 +36,26 @@ function handleFileSelect(evt) {
             }
         }
         if (sheetName === 'settings') {
-            default_language = XL_row_object[0].default_language;
+            defaultLanguage = XL_row_object[0].default_language;
         }
     });
-    $('#lang-picker').val(default_language);
+    setDefaultLanguage(defaultLanguage, languageList);
   };
   reader.onerror = function(ex) {
     console.log('Exception: ', ex);
   };
   reader.readAsBinaryString(file);
+}
+
+function setDefaultLanguage(defaultLanguage, languageList) {
+    if (defaultLanguage != null && defaultLanguage != '')
+        $('#lang-picker').val(defaultLanguage);
+    else if (languageList.indexOf('English') > -1)
+        $('#lang-picker').val('English');
+    else {
+        languageList.sort();
+        $('#lang-picker').val(languageList[0]);
+    }
 }
 
 // function unchecks all checkboxes on the page
