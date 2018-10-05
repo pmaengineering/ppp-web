@@ -155,6 +155,7 @@ class IndexView(MethodView):
         doc_file_path = _input.replace('.xlsx', '')\
             .replace('.xls', '')\
             # .replace('.html', '.doc')
+
         os.rename(_input, doc_file_path)
         _, doc_file_name = os.path.split(doc_file_path)
         mime_type = 'application/vnd.openxmlformats-officedocument.' \
@@ -196,7 +197,7 @@ class IndexView(MethodView):
         except OdkException as err:
             return err
         except Exception as err:
-            from pdb import set_trace; set_trace()
+            return err
             
     ''' @staticmethod
     def _build_ppp_ppp_tool_run_cmd(in_file_path, out_format, out_file_path):
