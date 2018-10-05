@@ -14,7 +14,8 @@ circleci-validate-config update-ppp ppp-update ppp-upgrade gunicorn-local \
 serve-local production-push-ci stagingpush-ci logs-heroku logs-staging-heroku \
 validations validate git-hash git-hash install upgrade-once upgrade uninstall \
 reinstall install-internal-dependencies install-latest-internal-dependencies \
-install-latest install-stable upgrade-latest upgrade-stable
+install-latest install-stable upgrade-latest upgrade-stable connect-staging \
+connect-prod connect connect-vim connect-vim-staging
 
 # DEVELOPMENT
 ## Linting
@@ -128,9 +129,9 @@ staging-connect-heroku:
 	heroku run bash --app ppp-web-staging
 ### Logs
 logs-heroku:
-	heroku logs --app ppp-web
+	heroku logs --app ppp-web --tail
 logs-staging-heroku:
-	heroku logs --app ppp-web-staging
+	heroku logs --app ppp-web-staging --tail
 
 ## Linode
 ### Notes
@@ -176,6 +177,16 @@ serve-dev: serve-local-flask
 ### SSH
 production-connect: production-connect-heroku
 staging-connect: staging-connect-heroku
+connect-staging: staging-connect-heroku
+connect-prod: production-connect-heroku
+connect: production-connect-heroku
+install-vim-on-server:
+	mkdir ~/vim; \
+	cd ~/vim; \
+	curl 'https://s3.amazonaws.com/bengoa/vim-static.tar.gz' | tar -xz; \
+	export VIMRUNTIME="$HOME/vim/runtime"; \
+	export PATH="$HOME/vim:$PATH"; \
+	cd -
 ### Logs
 logs: logs-heroku
 logs-staging: logs-staging-heroku
