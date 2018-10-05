@@ -196,7 +196,7 @@ class IndexView(MethodView):
         except OdkException as err:
             return err
         except Exception as err:
-            from pdb import set_trace; set_trace()
+            return err
             
     ''' @staticmethod
     def _build_ppp_ppp_tool_run_cmd(in_file_path, out_format, out_file_path):
