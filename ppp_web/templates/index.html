@@ -128,6 +128,11 @@
     </form>
   </div>
 </div>
+{% if attachment_filename %}
+    <div>
+      {{ attachment_filename }}
+    </div>
+{% endif %}
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         <div class="hidden" id="message" data-category="{{ messages[0][0] }}">
