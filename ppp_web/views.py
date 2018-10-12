@@ -118,7 +118,7 @@ class IndexView(MethodView):
         if stderr:
             if is_warning:
                 flash("STDERR:\n{}".format(stderr), "warning")
-                return render_template('index.html', **locals())
+                return render_template('index.html', version=version, **locals())
             else:
                 flash("STDERR:\n{}".format(stderr), "error")
                 return redirect(url_for('index'))

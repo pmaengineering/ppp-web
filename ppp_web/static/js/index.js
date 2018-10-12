@@ -169,6 +169,9 @@ $(document).ready(function () {
             'info': 'info'
         }
         notify_type = arr_cat_type[$message.data("category")];
+        if (notify_type == 'warning') {
+            $('#form-export').submit();
+        }
     }
 
     if (text !== '') {
@@ -192,3 +195,5 @@ $(document).ready(function () {
     // file input control change event handler
     document.getElementById('inFile').addEventListener('change', handleFileSelect, false);
 });
+
+/*======================== Check if the exception type and if warning, then download the stored tmp file ================================*/
