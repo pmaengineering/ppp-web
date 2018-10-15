@@ -113,15 +113,16 @@ class IndexView(MethodView):
         attachment_filename = uploaded_file.filename.replace('.xlsx', output_ext).replace('.xls', output_ext)
         print('attachment file name', attachment_filename)
         # if ppp.ppp tool wrote something to stderr, we should show it to user
-        # if stderr:
-        is_warning = stderr.lower().startswith("warning")
         if stderr:
-            if is_warning:
-                flash("STDERR:\n{}".format(stderr), "warning")
-                return render_template('index.html', version=version, **locals())
-            else:
-                flash("STDERR:\n{}".format(stderr), "error")
-                return redirect(url_for('index'))
+            is_warning = stderr.lower().startswith("warning")
+            # is_warning = True
+            if stderr:
+                if is_warning:
+                    flash("\n{}".format(stderr), "warning")
+                    return render_template('index.html', version=version, **locals())
+                else:
+                    flash("STDERR:\n{}".format(stderr), "error")
+                    return redirect(url_for('index'))
 
         # return file as response attachment, so browser will start download
         return send_file(pdf_doc_file_path,

@@ -35,12 +35,12 @@ def add_views(_app):
             'favicon.ico',
             mimetype='image/vnd.microsoft.icon')
 
-    @_app.route('/export', method='POST')
+    @_app.route('/export', methods=['POST'])
     def export():
         # need to catch post form fields and send file which was already stored
-        pdf_doc_file_path = request.data['pdf_doc_file_path'];
-        mime_type = request.data['mime_type'];
-        attachment_filename = request.data['attachment_filename'];
+        pdf_doc_file_path = request.form['pdf_doc_file_path']
+        mime_type = request.form['mime_type']
+        attachment_filename = request.form['attachment_filename']
         return send_file(pdf_doc_file_path,
                          as_attachment=True,
                          mimetype=mime_type,
