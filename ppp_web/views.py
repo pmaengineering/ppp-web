@@ -16,6 +16,7 @@ from flask import url_for
 from flask.views import MethodView
 from ppp import run, OdkException
 
+
 try:
     from ppp_web.ppp_web import app_config
     from ppp_web.config import version
@@ -70,20 +71,20 @@ class IndexView(MethodView):
         # TODO: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
         out_format = 'html' if output_format == 'pdf' else output_format
 
-        ''' command_line = \
+        command_line = \
             self._build_ppp_ppp_tool_run_cmd(in_file_path=temp_file.name,
                                              out_format=out_format,
                                              out_file_path=html_file_path)
-        _, stderr = self._run_background_process(command_line) '''
-        ppp_resp = self._run_ppp_api(in_file_path=temp_file.name,
+        _, stderr = self._run_background_process(command_line)
+        ''' ppp_resp = self._run_ppp_api(in_file_path=temp_file.name,
                                      out_format=out_format,
-                                     out_file_path=html_file_path)
-
-        # if ppp.ppp tool wrote something to stderr, we should show it to user
-        # if stderr:
-        if not ppp_resp:
-            flash("STDERR:\n{}".format(ppp_resp), "error")
-            return redirect(url_for('index'))
+                                     out_file_path=html_file_path) '''
+        is_warning = False
+        if stderr:
+            is_warning = stderr.lower().startswith("warning")
+            if is_warning is False:
+                flash("STDERR:\n{}".format(stderr), "error")
+                return redirect(url_for('index'))
 
         # output path now exists and refers to converted html file at /tmp
         pdf_doc_file_path = html_file_path
@@ -114,13 +115,21 @@ class IndexView(MethodView):
             pdf_doc_file_name, pdf_doc_file_path, mime_type = \
                 self._convert_to_doc(_input=html_file_path)
 
+        attachment_filename = uploaded_file.filename\
+            .replace('.xlsx', output_ext).replace('.xls', output_ext)
+
+        # if ppp.ppp tool wrote something to stderr, we should show it to user
+        if stderr:
+            if is_warning:
+                flash("\n{}".format(stderr), "warning")
+                return render_template('index.html',
+                                       version=version, **locals())
+
         # return file as response attachment, so browser will start download
         return send_file(pdf_doc_file_path,
                          as_attachment=True,
                          mimetype=mime_type,
-                         attachment_filename=uploaded_file.filename
-                         .replace('.xlsx', output_ext)
-                         .replace('.xls', output_ext))
+                         attachment_filename=attachment_filename)
 
     def _convert_to_pdf(self, _input, wkhtmltopdf_path):
         """This method converts .html file to .pdf file
@@ -154,7 +163,6 @@ class IndexView(MethodView):
         """
         doc_file_path = _input.replace('.xlsx', '')\
             .replace('.xls', '')\
-            # .replace('.html', '.doc')
 
         os.rename(_input, doc_file_path)
         _, doc_file_name = os.path.split(doc_file_path)
@@ -182,24 +190,39 @@ class IndexView(MethodView):
 
     @staticmethod
     def _run_ppp_api(in_file_path, out_format, out_file_path):
+        import sys
+        from io import StringIO
         language = request.form.get('language')
         lang_option = language if language and language != 'none' else ''
         preset = request.form.get('preset', 'standard')
+
+        old_stdout = sys.stdout
+        old_stderr = sys.stderr
+        # @Bciar: I commented out next line because not used. -Joe, 2018/10/16
+        # redirected_output = sys.stdout = StringIO()
+        redirected_error = sys.stderr = StringIO()
         try:
-            run(files=[in_file_path],
-                languages=[lang_option],
-                format=out_format,
-                preset=preset,
-                template='old',
-                outpath=out_file_path)
-            return True  # ?
-            # some logic
+            with run(files=[in_file_path],
+                     languages=[lang_option],
+                     format=out_format,
+                     preset=preset,
+                     template='old',
+                     outpath=out_file_path) as output:
+                print('run de out', output)
         except OdkException as err:
             return err
-        except Exception as err:
+        except Exception:
+            import traceback
+            # @Bciar: Commented next lines because not used. -Joe, 2018/10/16
+            # exc = traceback.format_exc()
+            # out = redirected_output.getvalue()
+            err = redirected_error.getvalue()
+            sys.stdout = old_stdout
+            sys.stderr = old_stderr
+            print('run stdout=====>', err)
             return err
             
-    ''' @staticmethod
+    @staticmethod
     def _build_ppp_ppp_tool_run_cmd(in_file_path, out_format, out_file_path):
         """This method build command line command to run ppp tool.
 
@@ -210,7 +233,7 @@ class IndexView(MethodView):
         lang_option = \
             '--language ' + language if language and language != 'none' else ''
         preset = request.form.get('preset', 'standard')
-        # Note: To be added in the future.
+        # Note: Options to be added in the future. - Joe 2018/10/16
         # options = request.form.getlist('options')
         command_line = ' '.join((
             'python',
@@ -224,4 +247,4 @@ class IndexView(MethodView):
             # *('--{}'.format(option) for option in options),
         ))
 
-        return command_line '''
+        return command_line

@@ -2,6 +2,8 @@
 import os
 
 from flask import Flask, send_from_directory
+from flask import request
+from flask import send_file
 
 try:
     from ppp_web.config import config
@@ -32,6 +34,17 @@ def add_views(_app):
             os.path.join(_app.root_path, 'static'),
             'favicon.ico',
             mimetype='image/vnd.microsoft.icon')
+
+    @_app.route('/export', methods=['POST'])
+    def export():
+        """Takes POST form fields and send file which was already stored."""
+        pdf_doc_file_path = request.form['pdf_doc_file_path']
+        mime_type = request.form['mime_type']
+        attachment_filename = request.form['attachment_filename']
+        return send_file(pdf_doc_file_path,
+                         as_attachment=True,
+                         mimetype=mime_type,
+                         attachment_filename=attachment_filename)
 
 
 def create_app(config_name=env_name):
