@@ -50,3 +50,7 @@ div.form-group.w100prc div.notifyjs-container {
 .submit-wrapper .alert {
   width: 100%;
 }
+
+.alert span[data-notify='message'] {
+  word-break: break-word;
+}
