@@ -4,6 +4,7 @@
 function handleFileSelect(evt) {
   $.notifyClose();
   let file = evt.target.files[0];
+  $('#lang-picker option:first-child').text('Processing file for languages...');
   let reader = new FileReader();
   reader.onload = function(e) {
     let data = e.target.result;
