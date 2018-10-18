@@ -14,8 +14,8 @@ function handleFileSelect(evt) {
     let languageList = [];
     let defaultLanguage = '';
     workbook.SheetNames.forEach(function(sheetName) {
-        let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
         if (sheetName === 'choices') {
+            let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
             $('#lang-picker').find('option').remove();
             const keys = Object.keys(XL_row_object[0]);
             keys.forEach(key => {
@@ -37,6 +37,7 @@ function handleFileSelect(evt) {
             }
         }
         if (sheetName === 'settings') {
+            let XL_row_object = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName]);
             defaultLanguage = XL_row_object[0].default_language;
         }
     });
