@@ -8,3 +8,4 @@ logs/
 *.py[cd]
 ignored/
 output/
+/temp/

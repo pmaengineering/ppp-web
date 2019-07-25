@@ -2,10 +2,10 @@
 import os
 import shlex
 import subprocess
-import ntpath
+# import ntpath
 from copy import copy
 from platform import platform
-from tempfile import NamedTemporaryFile
+# from tempfile import NamedTemporaryFile
 
 from flask import flash
 from flask import redirect
@@ -18,11 +18,11 @@ from ppp import run, OdkException
 
 try:
     from ppp_web.ppp_web import app_config
-    from ppp_web.config import version
+    from ppp_web.config import version, PROJECT_ROOT_DIR
 except ModuleNotFoundError:
     # noinspection PyUnresolvedReferences
     from ppp_web import app_config
-    from config import version
+    from config import version, PROJECT_ROOT_DIR
 
 
 class IndexView(MethodView):
@@ -44,12 +44,18 @@ class IndexView(MethodView):
             flash("Uploaded file is not an .xls or .xlsx file", "error")
             return redirect(url_for('index'))
 
+        temp_folder = os.path.join(PROJECT_ROOT_DIR, 'temp')
+        if not os.path.exists(temp_folder):
+            os.mkdir(temp_folder)
         # save file to /tmp folder
-        temp_file = NamedTemporaryFile()
-        temp_file_name_w_extension = ntpath.basename(temp_file.name)
-        temp_file.name = temp_file.name\
-            .replace(temp_file_name_w_extension, uploaded_file.filename)
-        uploaded_file.save(temp_file.name)
+        # temp_file = NamedTemporaryFile()
+        # temp_file_name_w_extension = ntpath.basename(temp_file.name)
+        # temp_file.name = temp_file.name\
+        #     .replace(temp_file_name_w_extension, uploaded_file.filename)
+        # uploaded_file.save(temp_file.name)
+        tempfile_path = os.path.join(temp_folder, uploaded_file.filename)
+        # uploaded_file.save(temp_file.name)
+        uploaded_file.save(tempfile_path)
 
         # get output format
         output_format = request.form.get('format')
@@ -62,22 +68,26 @@ class IndexView(MethodView):
             post_process_to = output_format
 
         # convert uploaded file to html
-        temp_html_file = NamedTemporaryFile()
-        html_file_path = copy(temp_file.name).replace('.xlsx', '')\
-            .replace('.xls', '') + '.' + 'html'
-        temp_html_file.name = html_file_path
+        # temp_html_file = NamedTemporaryFile()
+        # html_file_path = copy(temp_file.name).replace('.xlsx', '')\
+        #     .replace('.xls', '') + '.' + 'html'
+        # temp_html_file.name = html_file_path
+        html_file_path = copy(tempfile_path).replace('.xlsx', '') \
+                             .replace('.xls', '') + '.' + 'html'
 
         # TODO: This hard-makes PPP conv to HTML. Change to doc if doc, etc.
         out_format = 'html' if output_format == 'pdf' else output_format
 
-        ''' command_line = \
-            self._build_ppp_ppp_tool_run_cmd(in_file_path=temp_file.name,
-                                             out_format=out_format,
-                                             out_file_path=html_file_path)
-        _, stderr = self._run_background_process(command_line) '''
-        ppp_resp = self._run_ppp_api(in_file_path=temp_file.name,
-                                     out_format=out_format,
-                                     out_file_path=html_file_path)
+        # command_line = \
+        #     self._build_ppp_ppp_tool_run_cmd(in_file_path=temp_file.name,
+        #                                      out_format=out_format,
+        #                                      out_file_path=html_file_path)
+        # _, stderr = self._run_background_process(command_line)
+        ppp_resp = self._run_ppp_api(
+            # in_file_path=temp_file.name,
+            in_file_path=tempfile_path,
+            out_format=out_format,
+            out_file_path=html_file_path)
 
         # if ppp.ppp tool wrote something to stderr, we should show it to user
         # if stderr:
@@ -196,31 +206,32 @@ class IndexView(MethodView):
         except OdkException as err:
             return err
         except Exception as err:
-            from pdb import set_trace; set_trace()
+            return err
             
-    ''' @staticmethod
-    def _build_ppp_ppp_tool_run_cmd(in_file_path, out_format, out_file_path):
-        """This method build command line command to run ppp tool.
-
-        Returns:
-            string: Command.
-        """
-        language = request.form.get('language')
-        lang_option = \
-            '--language ' + language if language and language != 'none' else ''
-        preset = request.form.get('preset', 'standard')
-        # Note: To be added in the future.
-        # options = request.form.getlist('options')
-        command_line = ' '.join((
-            'python',
-            '-m ppp',
-            shlex.quote(in_file_path),
-            lang_option,
-            '--format ' + out_format,
-            '--preset ' + preset,
-            '--template ' + 'old',
-            '--outpath ' + shlex.quote(out_file_path)
-            # *('--{}'.format(option) for option in options),
-        ))
-
-        return command_line '''
+    # @staticmethod
+    # def _build_ppp_ppp_tool_run_cmd(in_file_path, out_format, out_file_path):
+    #     """This method build command line command to run ppp tool.
+    #
+    #     Returns:
+    #         string: Command.
+    #     """
+    #     language = request.form.get('language')
+    #     lang_option = \
+    #         '--language ' + language if language and language != 'none'
+    # else ''
+    #     preset = request.form.get('preset', 'standard')
+    #     # Note: To be added in the future.
+    #     # options = request.form.getlist('options')
+    #     command_line = ' '.join((
+    #         'python',
+    #         '-m ppp',
+    #         shlex.quote(in_file_path),
+    #         lang_option,
+    #         '--format ' + out_format,
+    #         '--preset ' + preset,
+    #         '--template ' + 'old',
+    #         '--outpath ' + shlex.quote(out_file_path)
+    #         # *('--{}'.format(option) for option in options),
+    #     ))
+    #
+    #     return command_line
