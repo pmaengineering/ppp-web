@@ -220,3 +220,41 @@ The server that PPP-Web uses is called "gunicorn", so...
 ### Activate virtual environment
 `cd /opt/ppp-web`  
 `/opt/ppp-web $` `source .venv/bin/activate`
+
+---
+
+
+=======================================
+Qlang: Utilitaires de langue du questionnaire
+=======================================
+
+Cette version nécessite Python 3 ou une version ultérieure. Python 2 n'est pas supporté.
+
+------------
+Installation
+------------
+
+lancer:
+
+pip3 installez https://github.com/jkpr/qlang/zipball/master
+
+
+-----
+Usage
+-----
+
+Pour créer des fichiers de traduction:
+
+python -m qlang.qlang FILE1 [FILE2 ...]
+
+Pour fusionner les traductions:
+
+python -m qlang.qlang -m FILE1 [FILE2 ...]
+
+Lors de la fusion, les XLSForms d'origine doivent être dans le même répertoire.
+
+----
+Bugs
+----
+
+Soumettez les rapports de bugs à James Pringle à l'adresse jpringleBEAR@jhu.edu
